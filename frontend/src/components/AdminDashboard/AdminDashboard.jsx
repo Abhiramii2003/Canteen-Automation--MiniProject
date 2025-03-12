@@ -1,29 +1,25 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import "./adminDashboard.css"; // Import CSS
+import { Link, Outlet } from "react-router-dom";
+import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
   return (
     <div className="admin-dashboard">
       {/* Sidebar */}
-      <aside className="admin-sidebar">
-        <h2 className="logo">Admin Panel</h2>
+      <div className="sidebar">
+        <h2>Admin Panel</h2>
         <nav>
-          <ul>
-            <li><Link to="/admin/orders">📦 Manage Orders</Link></li>
-            <li><Link to="/admin/inventory">📊 Inventory</Link></li>
-            <li><Link to="/admin/reports">📈 Sales Reports</Link></li>
-            <li><Link to="/admin/users">👥 Users</Link></li>
-            <li><Link to="/">🚪 Logout</Link></li>
-          </ul>
+          <Link to="orders">Manage Orders</Link>
+          <Link to="users">User Management</Link>
+          <Link to="analytics">Analytics</Link>
         </nav>
-      </aside>
+      </div>
 
       {/* Main Content */}
-      <main className="admin-main">
-        <h1>Welcome, Admin!</h1>
-        <p>Manage orders, inventory, and reports from here.</p>
-      </main>
+      <div className="main-content">
+        <div className="navbar">Admin Dashboard</div>
+        <Outlet /> {/* Displays nested routes */}
+      </div>
     </div>
   );
 };

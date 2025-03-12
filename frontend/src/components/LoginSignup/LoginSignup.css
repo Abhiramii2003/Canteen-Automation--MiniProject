@@ -1,100 +1,134 @@
-/* LoginSignup.css */
+@import url("https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css");
 
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f4f4f4;
-    font-family: Arial, sans-serif;
+  background: url("/images/canteenauto.webp") no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Full-Screen Overlay */
+.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Darkened background */
+  backdrop-filter: blur(10px);
+}
+
+/* Blurred Glass Box */
+.loginsignup-container {
+  background: rgba(255, 255, 255, 0.15) !important; /* Transparent white */
+  backdrop-filter: blur(15px) !important; /* Blurred effect */
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  animation: fadeIn 1s ease-in-out;
+  max-width: 400px;
+  width: 90%;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Smooth fade-in animation */
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(-20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.header .text {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+}
+
+.underline {
+  width: 50px;
+  height: 4px;
+  background: #ff6600;
+  margin: 10px auto;
+  border-radius: 2px;
+}
+
+/* Input Styling */
+.inputs .input {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 10px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.inputs .input img {
+  width: 20px;
+  margin-right: 10px;
+}
+
+input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 16px;
+  background: transparent;
+}
+
+/* Forgot Password */
+.forgot-password span {
+  color: #ff6600;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Button Container */
+.submit-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+}
+
+/* Submit Button */
+.submit {
+  background: #ff6600;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  font-weight: bold;
+}
+
+.submit:hover {
+  background: #e65c00;
+  transform: scale(1.05);
+}
+
+/* Disabled Button */
+.gray {
+  background: gray !important;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 500px) {
+  .loginsignup-container {
+    padding: 30px;
+    max-width: 90%;
   }
-  
-  .container {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 320px;
-    text-align: center;
-  }
-  
-  .header {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  .underline {
-    width: 50px;
-    height: 3px;
-    background: #007bff;
-    margin: 5px auto;
-    border-radius: 5px;
-  }
-  
-  .inputs {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-top: 20px;
-  }
-  
-  .input {
-    display: flex;
-    align-items: center;
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 5px;
-    background: #f9f9f9;
-  }
-  
-  .input img {
-    width: 20px;
-    margin-right: 10px;
-  }
-  
-  .input input {
-    border: none;
-    outline: none;
-    width: 100%;
-    background: transparent;
-    font-size: 14px;
-  }
-  
-  .forgot-password {
-    margin-top: 10px;
-    font-size: 12px;
-    color: #555;
-  }
-  
-  .forgot-password span {
-    color: #007bff;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  
+
   .submit-container {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
+    flex-direction: column;
+    gap: 10px;
   }
-  
+
   .submit {
-    background: #007bff;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.3s;
+    width: 100%;
   }
-  
-  .submit.gray {
-    background: #ccc;
-    cursor: not-allowed;
-  }
-  
-  .submit:hover:not(.gray) {
-    background: #0056b3;
-  }
-  
+}

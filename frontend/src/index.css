@@ -1,4 +1,5 @@
 /* index.css */
+@import "bootstrap/dist/css/bootstrap.min.css";
 
 * {
   margin: 0;
@@ -7,17 +8,67 @@
   font-family: Arial, sans-serif;
 }
 
+/* Ensure body allows scrolling and prevents shrinking */
 body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: url('../public/pexels-photo-1640777.jpeg') no-repeat center center/cover;
+  background-color: #f8f9fa; /* Light background */
+  padding: 20px;
 }
 
+/* Root container should be centered and full width */
 #root {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  max-width: 1400px; /* Prevent content from stretching too much */
+  margin: auto;
+  padding: 20px;
+}
+
+/* Menu items styling */
+.card {
+  border-radius: 15px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+/* Ensure images fit well */
+.card-img-top {
+  height: 250px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* Larger text and spacing */
+.card-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.card-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+/* Button styling */
+.btn-primary {
+  font-size: 1.2rem;
+  padding: 12px 20px;
+}
+
+/* Cart styling */
+.cart-container {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  width: 100%;
+  max-width: 700px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* List items in the cart */
+.list-group-item {
+  font-size: 1.2rem;
+  padding: 12px;
 }

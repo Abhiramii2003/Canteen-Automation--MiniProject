@@ -1,0 +1,40 @@
+/* Ensure grid is visible */
+.seat-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* 6 columns */
+  gap: 10px;
+  padding: 20px;
+  justify-content: center;
+}
+
+/* Seat styling */
+.seat {
+  width: 50px;
+  height: 50px;
+  background-color: #fff;
+  border: 2px solid #007bff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+/* Hover effect */
+.seat:hover {
+  transform: scale(1.1);
+}
+
+/* Booked seat */
+.booked {
+  background-color: #ff4d4d;
+  color: white;
+  cursor: not-allowed;
+}
+
+/* Available seat */
+.available {
+  background-color: #28a745;
+  color: white;
+}

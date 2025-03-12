@@ -1,11 +1,75 @@
 import React, { useState } from "react";
 import "./LoginSignup.css";
-import emailIcon from "../assets/DALL·E 2025-02-22 11.35.42 - A simple, modern password icon featuring a lock, minimalistic style, flat design.webp";
-import personIcon from "../assets/DALL·E 2025-02-22 11.35.51 - A simple, modern person icon featuring a user silhouette, minimalistic style, flat design.webp";
-import passwordIcon from "../assets/DALL·E 2025-02-22 11.35.54 - A simple, modern email icon featuring an envelope, minimalistic style, flat design.webp";
+import emailIcon from "../assets/gmail.webp";  // ✅ Fixed Import Path
+import personIcon from "../assets/user.webp"; // ✅ Fixed Import Path
+import passwordIcon from "../assets/password.webp"; // ✅ Fixed Import Path
+import "animate.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const LoginSignup = () => {
   const [action, setAction] = useState("Sign Up");
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+  const [message, setMessage] = useState("");
+
+  // Handle input changes
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Handle form submission
+  const handleSubmit = async () => {
+    setMessage(""); // Clear previous messages
+
+    if (!formData.email || !formData.password || (action === "Sign Up" && !formData.username)) {
+      setMessage("⚠️ Please fill in all fields.");
+      return;
+    }
+
+    const endpoint = action === "Sign Up" ? "/api/auth/signup" : "/api/auth/login";
+    const method = "POST";
+
+    try {
+      const response = await fetch(endpoint, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setMessage(`✅ ${data.message || "Success!"}`);
+      } else {
+        setMessage(`❌ ${data.error || "Something went wrong."}`);
+      }
+    } catch (error) {
+      setMessage("❌ Server error. Please try again.");
+    }
+  };
+
+  // Handle password reset
+  const handleForgotPassword = async () => {
+    if (!formData.email) {
+      setMessage("⚠️ Enter your email for password reset.");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: formData.email }),
+      });
+
+      const data = await response.json();
+      setMessage(`✅ ${data.message || "If email exists, check your inbox."}`);
+    } catch (error) {
+      setMessage("❌ Error sending reset link.");
+    }
+  };
 
   return (
     <div className="container">
@@ -14,47 +78,40 @@ const LoginSignup = () => {
         <div className="underline"></div>
       </div>
       <div className="inputs">
-        {action === "Login" ? (
-          <div></div>
-        ) : (
+        {action === "Sign Up" && (
           <div className="input">
             <img src={personIcon} alt="User Icon" />
-            <input type="text" placeholder="Username" />
+            <input type="text" name="username" placeholder="Username" value={formData.username} onChange={handleChange} />
           </div>
         )}
 
         <div className="input">
           <img src={emailIcon} alt="Email Icon" />
-          <input type="email" placeholder="Email" />
+          <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} />
         </div>
         <div className="input">
           <img src={passwordIcon} alt="Password Icon" />
-          <input type="password" placeholder="Password" />
+          <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} />
         </div>
       </div>
 
-      {action === "Sign Up" ? (
-        <div></div>
-      ) : (
+      {action === "Login" && (
         <div className="forgot-password">
-          Lost password? <span>Click Here!</span>
+          Lost password? <span onClick={handleForgotPassword}>Click Here!</span>
         </div>
       )}
 
+      {message && <div className="message">{message}</div>}
+
       <div className="submit-container">
-        <div
-          className={action === "Login" ? "submit gray" : "submit"}
-          onClick={() => setAction("Sign Up")}
-        >
-          Sign Up
-        </div>
-        <div
-          className={action === "Sign Up" ? "submit gray" : "submit"}
-          onClick={() => setAction("Login")}
-        >
-          Login
+        <div className="submit" onClick={() => setAction(action === "Sign Up" ? "Login" : "Sign Up")}>
+          {action === "Sign Up" ? "Switch to Login" : "Switch to Sign Up"}
         </div>
       </div>
+
+      <button className="submit" onClick={handleSubmit}>
+        {action}
+      </button>
     </div>
   );
 };

@@ -1,51 +1,41 @@
-import React from "react";
-import { Link, Routes, Route, Outlet, useNavigate } from "react-router-dom";
-import "./dashboard.css"; // Import CSS
-import Menu from "./Menu";
-import Orders from "./Orders";
-import Profile from "./Profile";
-
-const DashboardHome = () => (
-  <div className="dashboard-welcome">
-    <h1>Welcome to Your Dashboard</h1>
-    <p>Manage your orders, explore the menu, and enjoy seamless food ordering.</p>
-  </div>
-);
+import React from "react"; 
+import { Outlet, Link, useLocation } from "react-router-dom";
+import Order from "./Orders"; // Import the Order component
+import "bootstrap/dist/css/bootstrap.min.css";
+import "animate.css";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import "./Dashboard.css";
 
 const Dashboard = () => {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem("user"); // Clear user session
-    navigate("/login"); // Redirect to login page
-  };
+  const location = useLocation(); // Get current route
 
   return (
-    <div className="dashboard-container">
-      {/* Sidebar */}
-      <aside className="sidebar">
-        <h2 className="logo">Canteen</h2>
-        <nav>
-          <ul>
-            <li><Link to="/dashboard">🏠 Home</Link></li>
-            <li><Link to="/dashboard/menu">🍽 Menu</Link></li>
-            <li><Link to="/dashboard/orders">📦 My Orders</Link></li>
-            <li><Link to="/dashboard/profile">👤 Profile</Link></li>
-            <li><button onClick={handleLogout} className="logout-btn">🚪 Logout</button></li>
-          </ul>
-        </nav>
-      </aside>
+    <div className="container mt-4">
+      <h1 className="text-center mb-4">Dashboard</h1>
 
-      {/* Main Content */}
-      <main className="dashboard-main">
-        <Routes>
-          <Route index element={<DashboardHome />} /> {/* Default content when visiting /dashboard */}
-          <Route path="menu" element={<Menu />} />
-          <Route path="orders" element={<Orders />} />
-          <Route path="profile" element={<Profile />} />
-        </Routes>
-        <Outlet />
-      </main>
+      {/* Navigation */}
+      <nav className="nav nav-tabs justify-content-center">
+        <Link className={`nav-link ${location.pathname === "/dashboard" ? "active" : ""}`} to="/dashboard">
+          Home
+        </Link>
+        <Link className={`nav-link ${location.pathname === "/dashboard/menu" ? "active" : ""}`} to="/dashboard/menu">
+          Menu
+        </Link>
+        <Link className={`nav-link ${location.pathname === "/dashboard/orders" ? "active" : ""}`} to="/dashboard/orders">
+          Orders
+        </Link>
+        <Link className={`nav-link ${location.pathname === "/dashboard/profile" ? "active" : ""}`} to="/dashboard/profile">
+          Profile
+        </Link>
+        <Link className={`nav-link ${location.pathname === "/dashboard/SeatingArrangement" ? "active" : ""}`} to="/dashboard/SeatingArrangement">
+          Seat
+        </Link>
+      </nav>
+
+      {/* Render Orders component when the orders tab is active */}
+      <div className="mt-3">
+        {location.pathname === "/dashboard/orders" ? <Order /> : <Outlet />}
+      </div>
     </div>
   );
 };

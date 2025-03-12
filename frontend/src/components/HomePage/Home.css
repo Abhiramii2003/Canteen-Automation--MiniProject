@@ -1,49 +1,60 @@
+@import url("https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css");
+
 .home-container {
-    text-align: center;
-    padding: 50px;
-    background-color: #f8f9fa;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  height: 100vh;
+  background: url("/images/home-bg.jpg") no-repeat center center/cover;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Dark overlay to enhance readability */
+.home-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Adds a slight dark overlay */
+  z-index: 1;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 50px;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.food-animation {
+  font-size: 2rem;
+  margin: 20px 0;
+  animation: float 3s infinite alternate ease-in-out;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
   }
-  
-  h1 {
-    color: #333;
+  100% {
+    transform: translateY(-10px);
   }
-  
-  p {
-    margin: 20px 0;
-    font-size: 18px;
-    color: #555;
-  }
-  
-  .button-container {
-    margin-top: 20px;
-  }
-  
-  button {
-    margin: 10px;
-    padding: 12px 24px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  
-  .admin-btn {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  .user-btn {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  button:hover {
-    opacity: 0.8;
-  }
-  
+}
+
+.button-container button {
+  transition: transform 0.2s ease-in-out;
+}
+
+.button-container button:hover {
+  transform: scale(1.1);
+}
+
+/* Improve button animation */
+.button-container button {
+  position: relative;
+  z-index: 2;
+}
