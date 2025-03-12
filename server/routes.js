@@ -5,7 +5,10 @@ const bcrypt = require('bcrypt')
 const jwt=require('jsonwebtoken')
 // models  intializations
 const User=require('./model/usermodel')
-
+const MenuItem =require('./model/menuModel')
+const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
 
 
 
@@ -61,7 +64,77 @@ router.post("/register", async (req, res) => {
   });
 
 
+// Multer for image upload
+const storage = multer.diskStorage({
+  destination: "./uploads",
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+const upload = multer({ storage });
 
+// Routes
+
+// Get all menu items
+router.get("/menu", async (req, res) => {
+  try {
+    const menuItems = await MenuItem.find();
+    res.json(menuItems);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch menu items" });
+  }
+});
+
+// Add a new menu item
+router.post("/menu", upload.single("image"), async (req, res) => {
+  console.log(req.body);
+  
+  try {
+    const { name, price, description, category, available } = req.body;
+    const newItem = new MenuItem({
+      name,
+      price,
+      description,
+      category,
+      image: req.file ? `/uploads/${req.file.filename}` : "",
+      available,
+    });
+    await newItem.save();
+    res.status(201).json(newItem);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to add menu item" });
+  }
+});
+
+// Update a menu item
+router.put("/menu/:id", upload.single("image"), async (req, res) => {
+  try {
+    const { name, price, description, category, available } = req.body;
+    let updatedData = { name, price, description, category, available };
+
+    if (req.file) {
+      updatedData.image = `/uploads/${req.file.filename}`;
+    }
+
+    const updatedItem = await MenuItem.findByIdAndUpdate(req.params.id, updatedData, { new: true });
+    res.json(updatedItem);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update menu item" });
+  }
+});
+
+// Delete a menu item
+router.delete("/menu/:id", async (req, res) => {
+  try {
+    const deletedItem = await MenuItem.findByIdAndDelete(req.params.id);
+    if (deletedItem.image) {
+      fs.unlinkSync(`.${deletedItem.image}`); // Remove image file
+    }
+    res.json({ message: "Item deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete menu item" });
+  }
+});
 
 
 
