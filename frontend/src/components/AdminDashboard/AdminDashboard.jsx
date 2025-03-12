@@ -9,9 +9,10 @@ const AdminDashboard = () => {
       <div className="sidebar">
         <h2>Admin Panel</h2>
         <nav>
-          <Link to="orders">Manage Orders</Link>
-          <Link to="users">User Management</Link>
-          <Link to="analytics">Analytics</Link>
+          <Link to="/orders">Manage Orders</Link>
+          <Link to="/users">User Management</Link>
+          <Link to="/analytics">Analytics</Link>
+          <Link to="/admin/menu">Menu</Link>
         </nav>
       </div>
 
