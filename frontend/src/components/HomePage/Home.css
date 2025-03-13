@@ -1,42 +1,63 @@
-@import url("https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css");
-
+/* Full-page background styling */
 .home-container {
+  width: 100vw;
   height: 100vh;
-  background: url("/images/home-bg.jpg") no-repeat center center/cover;
-  display: flex;
+  background: url("/images/home-bg.jpg") no-repeat center center/cover;  display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
 }
 
-/* Dark overlay to enhance readability */
-.home-container::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* Adds a slight dark overlay */
-  z-index: 1;
-}
-
+/* Content box */
 .content {
-  position: relative;
-  z-index: 2;
   background: rgba(0, 0, 0, 0.7);
-  padding: 50px;
-  border-radius: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+  max-width: 80%;
+  width: 90%;
 }
 
+/* Heading */
+.content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  color: #ffd700;
+}
+
+/* Subtext */
+.content p {
+  font-size: 1.2rem;
+  color: #f8f9fa;
+  margin-bottom: 20px;
+}
+
+/* Animated food icons */
 .food-animation {
   font-size: 2rem;
-  margin: 20px 0;
-  animation: float 3s infinite alternate ease-in-out;
+  margin-bottom: 20px;
+  animation: foodBounce 1.5s infinite alternate;
 }
 
-@keyframes float {
+/* Button styling */
+.button-container .btn {
+  padding: 12px 30px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 8px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Button hover effect */
+.button-container .btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0px 5px 15px rgba(255, 255, 255, 0.3);
+}
+
+/* Food animation keyframes */
+@keyframes foodBounce {
   0% {
     transform: translateY(0);
   }
@@ -45,16 +66,22 @@
   }
 }
 
-.button-container button {
-  transition: transform 0.2s ease-in-out;
-}
+/* Responsive styles */
+@media (max-width: 768px) {
+  .content {
+    padding: 30px;
+  }
 
-.button-container button:hover {
-  transform: scale(1.1);
-}
+  .content h1 {
+    font-size: 2rem;
+  }
 
-/* Improve button animation */
-.button-container button {
-  position: relative;
-  z-index: 2;
+  .content p {
+    font-size: 1rem;
+  }
+
+  .button-container .btn {
+    font-size: 1rem;
+    padding: 10px 20px;
+  }
 }

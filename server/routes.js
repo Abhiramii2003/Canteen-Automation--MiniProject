@@ -17,17 +17,19 @@ const path = require("path");
 // api to register a user
 router.post("/register", async (req, res) => {
     try {
-      const { name, email, password } = req.body;
-      if (!name || !email || !password) {
-        return res.status(400).json({ error: "All fields are required" });
+      const { username, email, password } = req.body;
+      console.log(req.body);
+      
+      if (!username || !email || !password) {
+        return res.status(400).json( "All fields are required" );
       }
       const existingUser = await User.findOne({ email });
       if (existingUser) {
-        return res.status(400).json({ error: "Email already in use" });
+        return res.status(400).json("Email already in use" );
       }
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
-      const newUser = new User({ name, email, password: hashedPassword });
+      const newUser = new User({ name:username, email, password: hashedPassword });
       await newUser.save();
       res.status(201).json({ message: "User registered successfully" });
     } catch (error) {
@@ -56,7 +58,7 @@ router.post("/register", async (req, res) => {
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
         expiresIn: "1d",
       });
-      res.json({ token, user: { id: user._id, name: user.name, email: user.email } });
+      res.json({ token, user});
     } catch (error) {
       console.error("❌ Login Error:", error);
       res.status(500).json({ error: "Login failed" });
