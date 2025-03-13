@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Sidebar from "./Sidebar";
 // Create this for custom styles if needed
 
 const OrderManagement = () => {
@@ -24,7 +25,12 @@ const OrderManagement = () => {
  };
 
  return (
-   <div className="container mt-4">
+ <>
+ <div className="row">
+  <div className="col-lg-3">
+    <Sidebar/>
+  </div>
+  <div className=" col-lg-9 container mt-4">
      <h2 className="text-center mb-4">Order Management</h2>
      <table className="table table-bordered">
        <thead className="table-dark">
@@ -66,6 +72,8 @@ const OrderManagement = () => {
        </tbody>
      </table>
    </div>
+ </div>
+ </>
  );
 };
 

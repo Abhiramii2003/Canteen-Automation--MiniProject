@@ -1,0 +1,10 @@
+*{
+  margin: 0px;
+  padding: 0px;
+}
+#root {
+  width: 100%;
+  max-width: 1400px; /* Prevent content from stretching too much */
+  margin: auto;
+  padding: 20px;
+}

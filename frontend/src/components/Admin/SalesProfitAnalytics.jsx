@@ -13,6 +13,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Sidebar from "./Sidebar";
 
 const SalesAnalytics = () => {
   // Dummy sales data
@@ -37,7 +38,12 @@ const SalesAnalytics = () => {
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
   return (
-    <div className="container mt-4">
+    <>
+    <div className="row">
+      <div className="col-lg-3">
+        <Sidebar/>
+      </div>
+      <div className=" col-lg-9 container-fluid mt-4">
       <h2 className="text-center mb-4">Sales & Profit Analytics 📊</h2>
 
       {/* Summary Cards */}
@@ -95,6 +101,8 @@ const SalesAnalytics = () => {
         </div>
       </div>
     </div>
+      </div>
+   </>
   );
 };
 

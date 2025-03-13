@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./SeatManagement.css";
+import Sidebar from "./Sidebar";
 
 
 const SeatManagement = () => {
@@ -24,7 +25,12 @@ const SeatManagement = () => {
   };
 
   return (
-    <div className="container mt-4">
+     <>
+     <div className="row">
+      <div className="col-lg-3">
+        <Sidebar/>
+      </div>
+      <div className="col-lg-9 container-fluid mt-4">
       <h2 className="text-center mb-4">Seat Management</h2>
       <div className="seat-grid">
         {seats.map((seat) => (
@@ -46,6 +52,9 @@ const SeatManagement = () => {
         ))}
       </div>
     </div>
+     </div>
+     </>
+  
   );
 };
 

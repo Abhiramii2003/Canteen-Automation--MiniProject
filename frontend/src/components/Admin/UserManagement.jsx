@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Sidebar from "./Sidebar";
 
 const UserManagement = () => {
   // Sample user data
@@ -33,7 +34,12 @@ const UserManagement = () => {
   };
 
   return (
-    <div className="container mt-4">
+   <>
+   <div className="row">
+    <div className="col-lg-3">
+      <Sidebar/>
+    </div>
+    <div className=" col-lg-9 container-fluid mt-4">
       <h2 className="text-center mb-4">User Management</h2>
       <table className="table table-bordered table-hover">
         <thead className="table-dark">
@@ -83,6 +89,8 @@ const UserManagement = () => {
         </tbody>
       </table>
     </div>
+   </div>
+   </>
   );
 };
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./MenuManagement.css";
+import Sidebar from "./Sidebar";
 
 const API_URL = "http://localhost:5000";
 
@@ -94,7 +95,12 @@ const MenuManagement = () => {
   };
 
   return (
-    <div className="container mt-4">
+   <>
+   <div className="row">
+    <div className="col-lg-3">
+      <Sidebar/>
+    </div>
+    <div className=" col-lg-9 container mt-4">
       <h2 className="text-center">Menu Management</h2>
 
       {/* Add/Edit Form */}
@@ -144,6 +150,8 @@ const MenuManagement = () => {
         </div>
       </div>
     </div>
+   </div>
+   </>
   );
 };
 
