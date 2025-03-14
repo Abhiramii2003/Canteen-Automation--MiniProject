@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import emailIcon from "../assets/gmail.webp";
 import personIcon from "../assets/user.webp";
 import passwordIcon from "../assets/password.webp";
 import { useNavigate } from "react-router-dom";
-//import "./LoginSignup.css"
 
 const API_URL = "http://localhost:5000";
 
@@ -13,76 +12,67 @@ const LoginSignup = () => {
   const [formData, setFormData] = useState({ username: "", email: "", password: "" });
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate =useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
-    setMessage(""); // Clear message when switching between login and signup
+    setMessage(""); // Clear message only if it’s an error when switching
   }, [action]);
 
-  const handleChange = useCallback((e) => {
+  const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  }, [formData]);
+  };
 
   const handleSubmit = async () => {
     setMessage("");
-  
-    // Basic validation
+    
     if (!formData.email || !formData.password || (action === "SignUp" && !formData.username)) {
       setMessage("⚠️ Please fill in all fields.");
       return;
     }
-  
+
     if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      setMessage("⚠️ Enter a valid email.");
+      setMessage("⚠️ Please enter a valid email.");
       return;
     }
-  
-    if (formData.password.length < 6) {
-      setMessage("⚠️ Password must be at least 6 characters.");
-      return;
-    }
-  
-    const endpoint = action === "SignUp" ? `${API_URL}/register` : `${API_URL}/login`;
-  
+
     setLoading(true);
     try {
-      const response = await fetch(endpoint, {
+      const response = await fetch(`${API_URL}/${action.toLowerCase()}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-  
+
       const data = await response.json();
       if (response.ok) {
         setMessage(`✅ ${data.message || "Success!"}`);
-        
-        // Reset form fields
         setFormData({ username: "", email: "", password: "" });
-  
-        // Redirect based on role
-        if (data.user.role === "user") {
-          navigate("/dashboard");
-        } else if (data.user.role === "admin") {
-          navigate("/admin-dashboard");
+
+        if (data.user) {
+          if (data.user.role === "user") {
+            navigate("/dashboard");
+          } else if (data.user.role === "admin") {
+            navigate("/admin-dashboard");
+          }
+        } else {
+          setAction("Login");
+          navigate("/auth");
         }
       } else {
         setMessage(`❌ ${data.error || "Something went wrong."}`);
-        setFormData({ username: "", email: "", password: "" });
       }
     } catch (error) {
-      setFormData({ username: "", email: "", password: "" });
-      setMessage("❌ Server error. Please try again.");
+      setMessage("❌ Network error. Please try again.");
     }
     setLoading(false);
   };
-  
 
   const handleForgotPassword = async () => {
     if (!formData.email) {
       setMessage("⚠️ Enter your email for password reset.");
       return;
     }
-    
+
     setLoading(true);
     try {
       const response = await fetch(`${API_URL}/forgot-password`, {
@@ -90,8 +80,9 @@ const LoginSignup = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email }),
       });
+
       const data = await response.json();
-      setMessage(`✅ ${data.message || "If email exists, check your inbox."}`);
+      setMessage(`✅ ${data.message || "Check your inbox for reset instructions."}`);
     } catch (error) {
       setMessage("❌ Error sending reset link.");
     }
@@ -100,10 +91,10 @@ const LoginSignup = () => {
 
   return (
     <div className="container d-flex justify-content-center align-items-center min-vh-100">
-      <div className="card p-4 shadow-lg" style={{ width: "350px" }}>
+      <div className="card p-4 shadow-lg" style={{ maxWidth: "400px", width: "100%" }}>
         <h3 className="text-center mb-3">{action}</h3>
         {message && (
-          <div className={`alert ${message.includes("✅") ? "alert-success" : "alert-danger"}`}>
+          <div className={`alert ${message.startsWith("⚠️") ? "alert-warning" : "alert-danger"}`}>
             {message}
           </div>
         )}
