@@ -1,134 +1,59 @@
-@import url("https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css");
-
-body {
-  background: url("/images/canteenauto.webp") no-repeat center center fixed;
-  background-size: cover;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-}
-
-/* Full-Screen Overlay */
-.auth-page {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Background image & full-page styling */
+.login-container {
   height: 100vh;
   width: 100%;
-  background: rgba(0, 0, 0, 0.5); /* Darkened background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url("../../assets/loginpage.jpg") no-repeat center center/cover;
   backdrop-filter: blur(10px);
 }
 
-/* Blurred Glass Box */
-.loginsignup-container {
-  background: rgba(255, 255, 255, 0.15) !important; /* Transparent white */
-  backdrop-filter: blur(15px) !important; /* Blurred effect */
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  animation: fadeIn 1s ease-in-out;
+/* Glassmorphism effect for login card */
+.login-card {
   max-width: 400px;
-  width: 90%;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-/* Smooth fade-in animation */
-@keyframes fadeIn {
-  0% { opacity: 0; transform: translateY(-20px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-.header .text {
-  font-size: 24px;
-  font-weight: bold;
-  color: white;
-}
-
-.underline {
-  width: 50px;
-  height: 4px;
-  background: #ff6600;
-  margin: 10px auto;
-  border-radius: 2px;
-}
-
-/* Input Styling */
-.inputs .input {
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 8px;
-  padding: 12px;
-  margin: 10px 0;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.inputs .input img {
-  width: 20px;
-  margin-right: 10px;
-}
-
-input {
-  border: none;
-  outline: none;
   width: 100%;
-  font-size: 16px;
-  background: transparent;
-}
-
-/* Forgot Password */
-.forgot-password span {
-  color: #ff6600;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-/* Button Container */
-.submit-container {
-  display: flex;
-  justify-content: space-between;
-  margin: 20px 0;
-}
-
-/* Submit Button */
-.submit {
-  background: #ff6600;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   color: white;
-  padding: 12px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.3s ease-in-out;
-  font-weight: bold;
+  text-align: center;
 }
 
-.submit:hover {
-  background: #e65c00;
-  transform: scale(1.05);
+/* Input group styling */
+.input-group-text {
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
 }
 
-/* Disabled Button */
-.gray {
-  background: gray !important;
-  cursor: not-allowed;
+/* Buttons */
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+  transition: 0.3s;
 }
 
-/* Responsive Design */
-@media (max-width: 500px) {
-  .loginsignup-container {
-    padding: 30px;
-    max-width: 90%;
-  }
+.btn-primary:hover {
+  background-color: #0056b3;
+}
 
-  .submit-container {
-    flex-direction: column;
-    gap: 10px;
-  }
+.btn-secondary {
+  background-color: #6c757d;
+  border: none;
+  transition: 0.3s;
+}
 
-  .submit {
-    width: 100%;
-  }
+.btn-secondary:hover {
+  background-color: #495057;
+}
+
+/* Alert messages */
+.alert {
+  font-size: 14px;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  text-align: left;
 }

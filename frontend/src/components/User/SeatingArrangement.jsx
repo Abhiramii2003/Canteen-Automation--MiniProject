@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./SeatingArrangement.css"; // Custom styles
 import "bootstrap/dist/css/bootstrap.min.css";
+import Dashboard from "./Dashboard";
 
 const SeatingArrangement = () => {
   const rows = 5; // Number of rows
@@ -21,6 +22,9 @@ const SeatingArrangement = () => {
   };
 
   return (
+    <>
+    <div className="container-fluid py-5">
+      <Dashboard/>
     <div className="container mt-4">
       <h2 className="text-center mb-4">Seating Arrangement</h2>
       <div className="d-flex justify-content-center">
@@ -41,6 +45,8 @@ const SeatingArrangement = () => {
         </div>
       </div>
     </div>
+    </div>
+    </>
   );
 };
 

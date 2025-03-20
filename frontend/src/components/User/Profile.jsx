@@ -1,12 +1,16 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./profile.css";
+import Dashboard from "./Dashboard";
 
 
 
 
 const Profile = ({ user }) => {
   return (
+    <>
+    <div className="container-fluid py-5">
+      <Dashboard/>
     <div className="container mt-5">
       <div className="row justify-content-center">
         <div className="col-md-6">
@@ -30,6 +34,8 @@ const Profile = ({ user }) => {
         </div>
       </div>
     </div>
+    </div>
+    </>
   );
 };
 

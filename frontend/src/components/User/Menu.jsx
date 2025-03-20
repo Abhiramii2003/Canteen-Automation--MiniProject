@@ -3,6 +3,7 @@ import { ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Menu.css";
+import Dashboard from "./Dashboard";
 
 
 
@@ -62,6 +63,7 @@ const Menu = () => {
 
   return (
     <div className="container-fluid py-5">
+      <Dashboard/>
       <h1 className="mb-5 text-center display-4">🍽️ Canteen Menu</h1>
       <div className="d-flex justify-content-center mb-4">
         <select

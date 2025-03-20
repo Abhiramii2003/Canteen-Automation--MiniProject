@@ -4,6 +4,7 @@ import emailIcon from "../assets/gmail.webp";
 import personIcon from "../assets/user.webp";
 import passwordIcon from "../assets/password.webp";
 import { useNavigate } from "react-router-dom";
+import "./LoginSignup.css"; // Add this for custom styles
 
 const API_URL = "http://localhost:5000";
 
@@ -50,7 +51,7 @@ const LoginSignup = () => {
 
         if (data.user) {
           if (data.user.role === "user") {
-            navigate("/dashboard");
+            navigate("/dashboard-home");
           } else if (data.user.role === "admin") {
             navigate("/admin-dashboard");
           }
@@ -90,8 +91,8 @@ const LoginSignup = () => {
   };
 
   return (
-    <div className="container d-flex justify-content-center align-items-center min-vh-100">
-      <div className="card p-4 shadow-lg" style={{ maxWidth: "400px", width: "100%" }}>
+    <div className="login-container">
+      <div className="login-card">
         <h3 className="text-center mb-3">{action}</h3>
         {message && (
           <div className={`alert ${message.startsWith("⚠️") ? "alert-warning" : "alert-danger"}`}>

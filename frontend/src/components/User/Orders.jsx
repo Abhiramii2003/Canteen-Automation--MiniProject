@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Orders.css"; // Import styles
+import Dashboard from "./Dashboard";
 
 const Order = ({ userId }) => {
   const [menu, setMenu] = useState([]);
@@ -64,6 +65,10 @@ const Order = ({ userId }) => {
   };
 
   return (
+    <>
+    <div className="container-fluid py-5">
+      <Dashboard/>
+  
     <div className="order-container">
       <h2>Menu</h2>
       <div className="menu-list">
@@ -96,6 +101,8 @@ const Order = ({ userId }) => {
         </ul>
       )}
     </div>
+    </div>
+    </>
   );
 };
 
