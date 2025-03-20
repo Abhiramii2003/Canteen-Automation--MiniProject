@@ -39,8 +39,8 @@ const Dashboard = () => {
           <Link className={`nav-link ${location.pathname === "/profile" ? "active" : ""}`} to="/profile">
             <i className="fas fa-user"></i> Profile
           </Link>
-          <Link className={`nav-link ${location.pathname === "/seat" ? "active" : ""}`} to="/seat">
-            <i className="fas fa-chair"></i> Seating
+          <Link className={`nav-link ${location.pathname === "/cart" ? "active" : ""}`} to="/cart">
+            <i className="fas fa-cart-shopping"></i> cart
           </Link>
           {/* Logout Button */}
           <button className="logout-btn" onClick={handleLogout}>

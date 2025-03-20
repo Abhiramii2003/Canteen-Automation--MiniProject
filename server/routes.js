@@ -9,6 +9,9 @@ const MenuItem =require('./model/menuModel')
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
+const { usermenu } = require('./controller/menucontroller');
+const Cart = require('./model/cart');
+const { getCart, addtocart, removefromCart, clearfromcart, decreaseQuantity } = require('./controller/cartController');
 
 
 
@@ -141,7 +144,13 @@ router.delete("/menu/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete menu item" });
   }
 });
+ router.get('/user/menu',usermenu)
 
+router.get('/cart/:userId',getCart)
+router.post('/cart/add',addtocart)
+router.post('/cart/decrease',decreaseQuantity)
+router.post('/cart/remove',removefromCart)
+router.post('/clear/clear',clearfromcart)
 
 
 module.exports = router;

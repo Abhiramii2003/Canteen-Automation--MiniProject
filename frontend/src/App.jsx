@@ -20,6 +20,7 @@ import MenuManagement from "./components/Admin/MenuManagement.jsx";
 import SeatManagement from "./components/Admin/SeatManagement.jsx";
 import UserManagement from "./components/Admin/UserManagement.jsx";
 import SalesAnalytics from "./components/Admin/SalesProfitAnalytics.jsx";
+import CartPage from "./components/User/cartPage.jsx";
 
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
       <Route path="/profile" element={<Profile />} />
       <Route path="/order" element={<Orders />} />
       <Route path="/seat" element={<SeatingArrangement />} />
+      <Route path="cart" element={<CartPage/>}/>
 
       {/* Admin Dashboard Pages */}
       <Route path="/admin-dashboard" element={<AdminDashboard />} />
