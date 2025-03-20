@@ -42,6 +42,11 @@ const Dashboard = () => {
           <Link className={`nav-link ${location.pathname === "/cart" ? "active" : ""}`} to="/cart">
             <i className="fas fa-cart-shopping"></i> cart
           </Link>
+          <Link className={`nav-link ${location.pathname === "/notification" ? "active" : ""}`} to="/notification">
+  <i className="fas fa-bell"></i> Notifications
+</Link>
+
+
           {/* Logout Button */}
           <button className="logout-btn" onClick={handleLogout}>
             <i className="fas fa-sign-out-alt"></i> Logout

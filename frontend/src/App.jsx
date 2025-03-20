@@ -13,6 +13,8 @@ import Profile from "./components/User/Profile.jsx";
 import SeatingArrangement from "./components/User/SeatingArrangement.jsx";
 import DashboardHome from "./components/User/DashboardHome.jsx";
 
+import UserNotificationsAndRecommendations from "./components/User/UserNotificationsAndRecommendations";
+
 // Admin Components
 import AdminDashboard from "./components/Admin/AdminDashboard.jsx";
 import OrderManagement from "./components/Admin/OrderManagement.jsx";
@@ -21,6 +23,8 @@ import SeatManagement from "./components/Admin/SeatManagement.jsx";
 import UserManagement from "./components/Admin/UserManagement.jsx";
 import SalesAnalytics from "./components/Admin/SalesProfitAnalytics.jsx";
 import CartPage from "./components/User/cartPage.jsx";
+
+import AdminNotifications from "./components/Admin/AdminNotifications";
 
 
 function App() {
@@ -40,6 +44,8 @@ function App() {
       <Route path="/order" element={<Orders />} />
       <Route path="/seat" element={<SeatingArrangement />} />
       <Route path="cart" element={<CartPage/>}/>
+      <Route path="notification" element={<UserNotificationsAndRecommendations />} />
+
 
       {/* Admin Dashboard Pages */}
       <Route path="/admin-dashboard" element={<AdminDashboard />} />
@@ -48,6 +54,7 @@ function App() {
       <Route path="/admin-seat" element={<SeatManagement />} />
       <Route path="/admin-user" element={<UserManagement />} />
       <Route path="/admin-profit" element={<SalesAnalytics />} />
+      <Route path="/admin-notification" element={<AdminNotifications />} />
 
     
     </Routes>
