@@ -1,18 +1,29 @@
-exports.getRecommendations = async (req, res) => {
+
+const Order = require("../model/orderSchema");
+
+
+  exports.getOrderNotifications = async (req, res) => {
     try {
-      // Fetch recommendations logic
-      res.json({ message: "Recommendations fetched successfully" });
+      const userId = req.user.id; // Extracted from auth middleware
+      const orders = await Order.find({ userId });
+  
+      // Generate notifications based on order status
+      const notifications = orders.map((order) => {
+        switch (order.status.toLowerCase()) {
+          case "preparing":
+            return { id: order._id, message: `Your order (${order.token}) is being Preparing.` };
+          case "completed":
+            return { id: order._id, message: `Your order (${order.token}) is ready for pickup!` };
+          case "cancelled":
+            return { id: order._id, message: `Your order (${order.token}) has been cancelled.` };
+          default:
+            return null;
+        }
+      }).filter(Boolean); // Remove null values
+  
+      res.json(notifications);
     } catch (error) {
-      res.status(500).json({ error: "Failed to fetch recommendations" });
+      console.error("Error fetching notifications:", error);
+      res.status(500).json({ message: "Internal Server Error" });
     }
   };
-  
-  exports.addRecommendation = async (req, res) => {
-    try {
-      // Add recommendation logic
-      res.json({ message: "Recommendation added successfully" });
-    } catch (error) {
-      res.status(500).json({ error: "Failed to add recommendation" });
-    }
-  };
-  

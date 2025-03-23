@@ -22,6 +22,11 @@ const {
   clearfromcart,
   decreaseQuantity,
 } = require("./controller/cartController");
+const { selectseat, getseats, updateSeat } = require("./controller/seatController");
+const { confirmOrder, getorders } = require("./controller/OrderController");
+const authMiddleware = require("./authMiddleware");
+const { getOrderNotifications } = require("./controller/notificationController");
+const { profile } = require("./controller/userController");
 
 // api to register a user
 router.post("/signup", async (req, res) => {
@@ -94,9 +99,21 @@ router.delete("/menu/:id", deletemenu);
 router.get("/user/menu", usermenu);
 
 router.get("/cart/:userId", getCart);
-router.post("/cart/add", addtocart);
+router.post("/cart/add",authMiddleware, addtocart);
 router.post("/cart/decrease", decreaseQuantity);
 router.post("/cart/remove", removefromCart);
 router.post("/clear/clear", clearfromcart);
+
+router.post("/select-seat",selectseat)
+router.get("/api/seats",authMiddleware,getseats)
+router.post("/update-seat-status",authMiddleware,updateSeat)
+
+
+router.post("/confirm-order",authMiddleware,confirmOrder)
+router.get("/api/orders", authMiddleware,getorders)
+
+router.get("/api/orders/notifications", authMiddleware, getOrderNotifications);
+
+router.get('/api/user/profile',authMiddleware,profile)
 
 module.exports = router;
