@@ -60,6 +60,7 @@ export default function PaymentPage() {
           cart,
           seats: takeaway ? [] : selectedSeats,
           takeaway,
+          paymentMode
         },
         { headers: { Authorization: `Bearer ${authToken}` } }
       );

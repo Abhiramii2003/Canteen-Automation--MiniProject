@@ -7,7 +7,8 @@ const OrderSchema = new mongoose.Schema({
     seats: Array,
     takeaway: Boolean,
     userId:String,
-    status:{type:String,default:"preparing"},
+    paymentMode:String,
+    status:{type:String,default:"pending"},
     timestamp: { type: Date, default: Date.now },
   });
   

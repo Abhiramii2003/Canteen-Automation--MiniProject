@@ -35,3 +35,12 @@
       res.status(500).json({ error: "Failed to update seat status" });
     }
   }
+  exports.seatUpdate=async (req, res) => {
+    try {
+      const { status } = req.body;
+      const updatedSeat = await Seat.findByIdAndUpdate(req.params.id, { status }, { new: true });
+      res.json(updatedSeat);
+    } catch (error) {
+      res.status(500).json({ message: "Error updating seat", error });
+    }
+  }

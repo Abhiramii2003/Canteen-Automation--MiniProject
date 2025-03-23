@@ -22,11 +22,11 @@ const {
   clearfromcart,
   decreaseQuantity,
 } = require("./controller/cartController");
-const { selectseat, getseats, updateSeat } = require("./controller/seatController");
-const { confirmOrder, getorders } = require("./controller/OrderController");
+const { selectseat, getseats, updateSeat, seatUpdate } = require("./controller/seatController");
+const { confirmOrder, getorders, getAllOrders, updateOrderStatus, getLastToken } = require("./controller/OrderController");
 const authMiddleware = require("./authMiddleware");
 const { getOrderNotifications } = require("./controller/notificationController");
-const { profile } = require("./controller/userController");
+const { profile, profileimage, getUserProfile, uploadProfileImage, upload } = require("./controller/userController");
 
 // api to register a user
 router.post("/signup", async (req, res) => {
@@ -114,6 +114,16 @@ router.get("/api/orders", authMiddleware,getorders)
 
 router.get("/api/orders/notifications", authMiddleware, getOrderNotifications);
 
-router.get('/api/user/profile',authMiddleware,profile)
+router.post("/user/upload-profile", authMiddleware, upload.single("profileImage"), uploadProfileImage);
 
+// Route to Get User Profile
+router.get("/user/profile", authMiddleware, getUserProfile);
+
+router.get("/orders", getAllOrders);
+router.put("/orders/:id", updateOrderStatus);
+
+router.get('/orders/last-token',getLastToken)
+router.get("/seats",getseats)
+
+router.put('/seats/:id',seatUpdate)
 module.exports = router;

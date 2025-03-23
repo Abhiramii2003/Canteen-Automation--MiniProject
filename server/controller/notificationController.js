@@ -10,6 +10,8 @@ const Order = require("../model/orderSchema");
       // Generate notifications based on order status
       const notifications = orders.map((order) => {
         switch (order.status.toLowerCase()) {
+          case "pending":
+          return { id: order._id, message: `Your order (${order.token}) is being pending.` };
           case "preparing":
             return { id: order._id, message: `Your order (${order.token}) is being Preparing.` };
           case "completed":

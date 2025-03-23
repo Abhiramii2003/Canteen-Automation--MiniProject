@@ -7,7 +7,7 @@ import Dashboard from "./Dashboard";
 const Profile = () => {
   const [user, setUser] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
-  const BASE_URL = "http://localhost:5000/api"; // Backend API URL
+  const BASE_URL = "http://localhost:5000"; // Backend API URL
 
   useEffect(() => {
     fetchUserProfile();
@@ -62,11 +62,12 @@ const Profile = () => {
                 <div className="card-body text-center">
                   {/* Profile Image */}
                   <img
-                    src={user?.profileImage || "https://via.placeholder.com/150"}
-                    alt="Profile"
-                    className="rounded-circle img-fluid mb-3"
-                    style={{ width: "120px", height: "120px", objectFit: "cover" }}
-                  />
+  src={user?.profileImage ? `${BASE_URL}${user.profileImage}` : "https://www.pngmart.com/files/23/Profile-PNG-Photo.png"}
+  alt="Profile"
+  className="rounded-circle img-fluid mb-3"
+  style={{ width: "120px", height: "120px", objectFit: "cover" }}
+/>
+
                   <h3 className="card-title">{user?.name || "User Name"}</h3>
                   <p className="text-muted">{user?.email || "user@example.com"}</p>
 
@@ -76,15 +77,13 @@ const Profile = () => {
                     Upload Profile Image
                   </button>
                 </div>
-                <div className="card-footer text-center bg-light">
-                  <button className="btn btn-primary me-2">Edit Profile</button>
-                  <button className="btn btn-danger">Logout</button>
+               
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+   
     </>
   );
 };

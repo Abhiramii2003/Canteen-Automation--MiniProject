@@ -1,80 +1,117 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import Sidebar from "./Sidebar";
-// Create this for custom styles if needed
+import "./OrderManagement.css"; // Import the CSS file
+
+const BASE_URL = "http://localhost:5000"; // Update if backend URL differs
 
 const OrderManagement = () => {
- // Sample orders data
- const [orders, setOrders] = useState([
-   { id: 1, customer: "John Doe", item: "Burger", status: "Pending" },
-   { id: 2, customer: "Jane Smith", item: "Pizza", status: "Preparing" },
-   { id: 3, customer: "Alice Brown", item: "Pasta", status: "Completed" },
- ]);
+  const [orders, setOrders] = useState([]);
 
- // Function to update order status
- const updateStatus = (id, newStatus) => {
-   setOrders((prevOrders) =>
-     prevOrders.map((order) =>
-       order.id === id ? { ...order, status: newStatus } : order
-     )
-   );
- };
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
- // Function to delete an order
- const deleteOrder = (id) => {
-   setOrders((prevOrders) => prevOrders.filter((order) => order.id !== id));
- };
+  const fetchOrders = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/orders`);
+      const sortedOrders = sortOrders(response.data);
+      setOrders(sortedOrders);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
+  };
 
- return (
- <>
- <div className="row">
-  <div className="col-lg-3">
-    <Sidebar/>
-  </div>
-  <div className=" col-lg-9 container mt-4">
-     <h2 className="text-center mb-4">Order Management</h2>
-     <table className="table table-bordered">
-       <thead className="table-dark">
-         <tr>
-           <th>ID</th>
-           <th>Customer</th>
-           <th>Item</th>
-           <th>Status</th>
-           <th>Actions</th>
-         </tr>
-       </thead>
-       <tbody>
-         {orders.map((order) => (
-           <tr key={order.id}>
-             <td>{order.id}</td>
-             <td>{order.customer}</td>
-             <td>{order.item}</td>
-             <td>
-               <select
-                 className="form-select"
-                 value={order.status}
-                 onChange={(e) => updateStatus(order.id, e.target.value)}
-               >
-                 <option value="Pending">Pending</option>
-                 <option value="Preparing">Preparing</option>
-                 <option value="Completed">Completed</option>
-               </select>
-             </td>
-             <td>
-               <button
-                 className="btn btn-danger"
-                 onClick={() => deleteOrder(order.id)}
-               >
-                 Delete
-               </button>
-             </td>
-           </tr>
-         ))}
-       </tbody>
-     </table>
-   </div>
- </div>
- </>
- );
+  const sortOrders = (orders) => {
+    return orders.sort((a, b) => (a.status === "Completed" ? 1 : -1));
+  };
+
+  const updateStatus = async (id, newStatus) => {
+    try {
+      await axios.put(`${BASE_URL}/orders/${id}`, { status: newStatus });
+      setOrders((prevOrders) => {
+        const updatedOrders = prevOrders.map((order) =>
+          order._id === id ? { ...order, status: newStatus } : order
+        );
+        return sortOrders(updatedOrders);
+      });
+    } catch (error) {
+      console.error("Error updating order status:", error);
+    }
+  };
+
+  return (
+    <div className="order-management">
+      <div className="row">
+        <div className="col-lg-2">
+          <Sidebar />
+        </div>
+        <div className="col-lg-10 container mt-4">
+          <h2 className="text-center order-heading">Order Management</h2>
+          <div className="table-responsive">
+            <table className="table custom-table">
+              <thead>
+                <tr>
+                  <th>Token</th>
+                  <th>User</th>
+                  <th>Items</th>
+                  <th>Total</th>
+                  <th>Payment</th>
+                  <th>Seats</th>
+                  <th>Takeaway</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((order) => (
+                  <tr key={order._id}>
+                    <td className="token-cell">{order.token}</td>
+                    <td>{order.userId}</td>
+                    <td>
+                      <ul className="order-list">
+                        {order.cart.map((item, index) => (
+                          <li key={index}>
+                            {item.name} - <strong>₹{item.price}</strong>
+                          </li>
+                        ))}
+                      </ul>
+                    </td>
+                    <td><strong>₹{order.totalAmount.toFixed(2)}</strong></td>
+                    <td className="payment-mode">{order.paymentMode}</td>
+                    <td>
+                      {order.seats.length > 0 ? (
+                        <ul className="order-list">
+                          {order.seats.map((seat, index) => (
+                            <li key={index}>
+                              Table {seat.table}, Seat {seat.seat}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <span className="no-seats">No seats</span>
+                      )}
+                    </td>
+                    <td className="takeaway-status">{order.takeaway ? "Yes" : "No"}</td>
+                    <td>
+                      <select
+                        className={`form-select status-dropdown status-${order.status.toLowerCase()}`}
+                        value={order.status}
+                        onChange={(e) => updateStatus(order._id, e.target.value)}
+                      >
+                        <option value="Pending">Pending</option>
+                        <option value="Preparing">Preparing</option>
+                        <option value="Completed">Completed</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default OrderManagement;

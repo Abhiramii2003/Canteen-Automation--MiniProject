@@ -49,19 +49,28 @@ export default function OrderDetail() {
     setSelectedSeats([]);
   };
 
-  const handleProceed = () => {
-    const tokenNumber = Math.floor(100 + Math.random() * 900); // Generate 4-digit token
-    navigate("/paymentpage", {
-      state: {
-        selectedSeats,
-        token: tokenNumber,
-        totalAmount: cart.reduce((acc, item) => acc + item.price, 0),
-        takeaway,
-        cart
-        
-      },
-    });
+  const handleProceed = async () => {
+    try {
+      // Fetch the last token number from the backend
+      const response = await axios.get("http://localhost:5000/orders/last-token");
+      const lastToken = response.data.lastToken || 9;
+      
+      const tokenNumber = lastToken + 1; // Increment the token number
+  
+      navigate("/paymentpage", {
+        state: {
+          selectedSeats,
+          token: tokenNumber,
+          totalAmount: cart.reduce((acc, item) => acc + item.price, 0),
+          takeaway,
+          cart,
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching last token:", error);
+    }
   };
+  
 
   return (
     <div className={styles.container}>

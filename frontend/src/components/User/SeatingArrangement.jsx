@@ -1,53 +1,66 @@
-import React, { useState } from "react";
-import "./SeatingArrangement.css"; // Custom styles
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./SeatingArrangement.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Dashboard from "./Dashboard";
+//import Dashboard from "./Dashboard";
 
-const SeatingArrangement = () => {
-  const rows = 5; // Number of rows
-  const cols = 6; // Number of columns
+const BASE_URL = "http://localhost:5000"; // Update this if your backend URL differs
 
-  // Initial seat status (false = available, true = booked)
-  const [seats, setSeats] = useState(
-    Array.from({ length: rows }, () => Array(cols).fill(false))
-  );
+const AdminSeatingManagement = () => {
+  const [seats, setSeats] = useState([]);
 
-  // Handle seat click (toggle booking)
-  const toggleSeat = (row, col) => {
-    setSeats((prevSeats) =>
-      prevSeats.map((r, i) =>
-        r.map((seat, j) => (i === row && j === col ? !seat : seat))
-      )
-    );
+  // Fetch seats from the backend
+  useEffect(() => {
+    fetchSeats();
+  }, []);
+
+  const fetchSeats = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/seats`);
+      setSeats(response.data);
+    } catch (error) {
+      console.error("Error fetching seats:", error);
+    }
+  };
+
+  // Toggle seat availability
+  const toggleSeatStatus = async (id, currentStatus) => {
+    const newStatus = currentStatus === "available" ? "unavailable" : "available";
+    
+    try {
+      await axios.put(`${BASE_URL}/seats/${id}`, { status: newStatus });
+      setSeats((prevSeats) =>
+        prevSeats.map((seat) =>
+          seat._id === id ? { ...seat, status: newStatus } : seat
+        )
+      );
+    } catch (error) {
+      console.error("Error updating seat status:", error);
+    }
   };
 
   return (
-    <>
     <div className="container-fluid py-5">
-      <Dashboard/>
-    <div className="container mt-4">
-      <h2 className="text-center mb-4">Seating Arrangement</h2>
-      <div className="d-flex justify-content-center">
-        <div className="seat-grid">
-          {seats.map((row, rowIndex) => (
-            <div key={rowIndex} className="d-flex">
-              {row.map((seat, colIndex) => (
-                <div
-                  key={colIndex}
-                  className={`seat ${seat ? "booked" : "available"}`}
-                  onClick={() => toggleSeat(rowIndex, colIndex)}
-                >
-                  {rowIndex + 1}-{colIndex + 1}
-                </div>
-              ))}
-            </div>
-          ))}
+    
+      <div className="container mt-4">
+        <h2 className="text-center mb-4">Admin Seating Management</h2>
+        <div className="d-flex justify-content-center">
+          <div className="seat-grid">
+            {seats.map((seat) => (
+              <div
+                key={seat._id}
+                className={`seat ${seat.status === "available" ? "available" : "unavailable"}`}
+                onClick={() => toggleSeatStatus(seat._id, seat.status)}
+              >
+                Table {seat.table}, Seat {seat.seat}
+              </div>
+            ))}
+          </div>
         </div>
+        <p className="text-center mt-3">Click a seat to toggle its availability.</p>
       </div>
     </div>
-    </div>
-    </>
   );
 };
 
-export default SeatingArrangement;
+export default AdminSeatingManagement;
