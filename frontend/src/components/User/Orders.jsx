@@ -4,105 +4,90 @@ import "./Orders.css"; // Import styles
 import Dashboard from "./Dashboard";
 
 const Order = ({ userId }) => {
-  const [menu, setMenu] = useState([]);
   const [orders, setOrders] = useState([]);
-  const [cart, setCart] = useState([]);
-  
+  const BASE_URL = "http://localhost:5000/api"; // Base API URL
+
   useEffect(() => {
-    fetchMenu();
     fetchOrders();
   }, []);
 
-  const fetchMenu = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/api/menu"); // Backend API for menu
-      setMenu(response.data);
-    } catch (error) {
-      console.error("Error fetching menu:", error);
-    }
-  };
-
   const fetchOrders = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/orders/${userId}`);
+      const token = sessionStorage.getItem("token"); // Retrieve token from storage
+
+      const response = await axios.get(`${BASE_URL}/orders`, {
+        headers: { Authorization: `Bearer ${token}` }, // Send token
+      });
+
       setOrders(response.data);
     } catch (error) {
       console.error("Error fetching orders:", error);
     }
   };
 
-  const addToCart = (item) => {
-    const existingItem = cart.find((cartItem) => cartItem.name === item.name);
-    if (existingItem) {
-      setCart(cart.map(cartItem => 
-        cartItem.name === item.name ? { ...cartItem, quantity: cartItem.quantity + 1 } : cartItem
-      ));
-    } else {
-      setCart([...cart, { ...item, quantity: 1 }]);
-    }
-  };
-
-  const placeOrder = async () => {
-    if (cart.length === 0) {
-      alert("Your cart is empty!");
-      return;
-    }
-
-    const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-    try {
-      const response = await axios.post("http://localhost:5000/api/orders/place", {
-        userId,
-        items: cart,
-        totalAmount,
-      });
-      alert("Order placed successfully!");
-      setCart([]);
-      fetchOrders(); // Refresh orders after placing
-    } catch (error) {
-      console.error("Error placing order:", error);
+  // Function to get status color
+  const getStatusClass = (status) => {
+    switch (status.toLowerCase()) {
+      case "preparing":
+        return "status preparing";
+      case "completed":
+        return "status completed";
+      case "cancelled":
+        return "status cancelled";
+      default:
+        return "status";
     }
   };
 
   return (
-    <>
     <div className="container-fluid py-5">
-      <Dashboard/>
-  
-    <div className="order-container">
-      <h2>Menu</h2>
-      <div className="menu-list">
-        {menu.map((item) => (
-          <div key={item._id} className="menu-item">
-            <p>{item.name} - ₹{item.price}</p>
-            <button onClick={() => addToCart(item)}>Add to Cart</button>
-          </div>
-        ))}
+      <Dashboard />
+      <div className="order-container">
+        <h2>My Orders</h2>
+        {orders.length === 0 ? (
+          <p>No orders yet</p>
+        ) : (
+          <ul className="order-list">
+            {orders.map((order) => (
+              <li key={order._id} className="order-item">
+                <p><strong>Order ID:</strong> {order.token}</p>
+                
+                {/* Highlighted Status */}
+                <p>
+                  <strong>Status:</strong>{" "}
+                  <span className={getStatusClass(order.status)}>{order.status}</span>
+                </p>
+
+                <p><strong>Total Amount:</strong> ₹{order.totalAmount}</p>
+                <p><strong>Takeaway:</strong> {order.takeaway ? "Yes" : "No"}</p>
+                
+                {order.seats.length > 0 && (
+                  <p>
+                    <strong>Seats Selected:</strong>{" "}
+                    {order.seats.map(seat => (
+                      <span key={seat._id}>
+                        Table {seat.table}, Seat {seat.seat} <br />
+                      </span>
+                    ))}
+                  </p>
+                )}
+
+                <p><strong>Ordered Items:</strong></p>
+                <ul>
+                  {order.cart.map((item, index) => (
+                    <li key={index}>
+                      {item.name} - ₹{item.price} x {item.quantity} = ₹{item.price * item.quantity}
+                    </li>
+                  ))}
+                </ul>
+
+                <p><strong>Ordered At:</strong> {new Date(order.timestamp).toLocaleString()}</p>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
-
-      <h2>Cart</h2>
-      {cart.length === 0 ? <p>Your cart is empty</p> : (
-        <div>
-          {cart.map((item, index) => (
-            <p key={index}>{item.name} x {item.quantity} - ₹{item.price * item.quantity}</p>
-          ))}
-          <button onClick={placeOrder}>Place Order</button>
-        </div>
-      )}
-
-      <h2>My Orders</h2>
-      {orders.length === 0 ? <p>No orders yet</p> : (
-        <ul>
-          {orders.map((order) => (
-            <li key={order._id}>
-              <strong>Order ID:</strong> {order._id} - <strong>Status:</strong> {order.status}
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
-    </div>
-    </>
   );
 };
 

@@ -45,7 +45,13 @@ const LoginSignup = () => {
       });
 
       const data = await response.json();
+      console.log(data);
+     
+
+      
       if (response.ok) {
+        sessionStorage.setItem("token", data.token);
+        sessionStorage.setItem("userData", JSON.stringify(data.user));
         setMessage(`✅ ${data.message || "Success!"}`);
         setFormData({ username: "", email: "", password: "" });
 

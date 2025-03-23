@@ -12,6 +12,8 @@ import Orders from "./components/User/Orders.jsx";
 import Profile from "./components/User/Profile.jsx";
 import SeatingArrangement from "./components/User/SeatingArrangement.jsx";
 import DashboardHome from "./components/User/DashboardHome.jsx";
+        <Route path="/order-details" element={<OrderDetails />} />
+
 
 import UserNotificationsAndRecommendations from "./components/User/UserNotificationsAndRecommendations";
 
@@ -25,6 +27,9 @@ import SalesAnalytics from "./components/Admin/SalesProfitAnalytics.jsx";
 import CartPage from "./components/User/cartPage.jsx";
 
 import AdminNotifications from "./components/Admin/AdminNotifications";
+import OrderDetails from "./components/User/OrderDetails.jsx";
+import PaymentPage from "./components/User/PaymentPage.jsx";
+import OrderConfirmation from "./components/User/OrderConfirmation.jsx";
 
 
 function App() {
@@ -45,6 +50,10 @@ function App() {
       <Route path="/seat" element={<SeatingArrangement />} />
       <Route path="cart" element={<CartPage/>}/>
       <Route path="notification" element={<UserNotificationsAndRecommendations />} />
+      <Route path="/order-details" element={<OrderDetails />} />
+      <Route path ="/paymentpage" element={<PaymentPage/>}/>
+      <Route path="/order-confirmation" element={<OrderConfirmation/>}/>
+
 
 
       {/* Admin Dashboard Pages */}

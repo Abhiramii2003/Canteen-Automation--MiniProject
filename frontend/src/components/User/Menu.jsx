@@ -13,16 +13,27 @@ const Menu = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [popup, setPopup] = useState(false);
-  const userId = "67d3b95ac5b65bdc1f78e410"; // Replace with actual user ID
+
+  // Retrieve user data & token from sessionStorage
+  const storedUserData = sessionStorage.getItem("userData");
+  const userData = storedUserData ? JSON.parse(storedUserData) : null;
+  const token = sessionStorage.getItem("token");
+
+  // Get user ID safely
+  const userId = userData?._id || null;
 
   useEffect(() => {
-    fetchMenu();
-    fetchCart();
-  }, []);
+    if (userId && token) {
+      fetchMenu();
+      fetchCart();
+    }
+  }, [userId, token]);
 
   const fetchMenu = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/user/menu");
+      const response = await axios.get("http://localhost:5000/user/menu", {
+        headers: { Authorization: `Bearer ${token}` }, // Attach token
+      });
       setAllProducts(response.data);
       setFilteredProducts(response.data);
       setCategories([...new Set(response.data.map((item) => item.category))]);
@@ -33,49 +44,45 @@ const Menu = () => {
 
   const fetchCart = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/cart/${userId}`);
+      const response = await axios.get(`http://localhost:5000/cart/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }, // Attach token
+      });
       setCart(response.data.items || []);
     } catch (error) {
       console.error("Error fetching cart:", error);
     }
   };
 
- const addToCart = async (item) => {
-  try {
-    const response = await axios.post("http://localhost:5000/cart/add", {
-      userId,
-      productId: item._id,
-      name: item.name,
-      price: item.price,
-      image: item.image,
-    });
+  const addToCart = async (item) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/cart/add",
+        {
+          userId,
+          productId: item._id,
+          name: item.name,
+          price: item.price,
+          image: item.image,
+          category: item.category,
+        },
+        { headers: { Authorization: `Bearer ${token}` } } // Attach token
+      );
 
-    // Merge existing cart items to ensure only one entry per item
-    const updatedCart = response.data.items.reduce((acc, curr) => {
-      const existingItem = acc.find((i) => i.productId === curr.productId);
-      if (existingItem) {
-        existingItem.quantity = curr.quantity;
-      } else {
-        acc.push(curr);
-      }
-      return acc;
-    }, []);
-
-    setCart(updatedCart);
-    setPopup(true);
-    setTimeout(() => setPopup(false), 2000);
-  } catch (error) {
-    console.error("Error adding to cart:", error);
-  }
-};
-
+      setCart(response.data.items);
+      setPopup(true);
+      setTimeout(() => setPopup(false), 2000);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    }
+  };
 
   const decreaseQuantity = async (item) => {
     try {
-      const response = await axios.post("http://localhost:5000/cart/decrease", {
-        userId,
-        productId: item.productId,
-      });
+      const response = await axios.post(
+        "http://localhost:5000/cart/decrease",
+        { userId, productId: item.productId },
+        { headers: { Authorization: `Bearer ${token}` } } // Attach token
+      );
 
       setCart(response.data.items);
     } catch (error) {
@@ -85,10 +92,11 @@ const Menu = () => {
 
   const removeFromCart = async (item) => {
     try {
-      const response = await axios.post("http://localhost:5000/cart/remove", {
-        userId,
-        productId: item.productId,
-      });
+      const response = await axios.post(
+        "http://localhost:5000/cart/remove",
+        { userId, productId: item.productId },
+        { headers: { Authorization: `Bearer ${token}` } } // Attach token
+      );
 
       setCart(response.data.items);
     } catch (error) {
@@ -140,7 +148,12 @@ const Menu = () => {
           </div>
         ))}
         <p className="fw-bold fs-2">Total: ₹{totalAmount}</p>
-        <button className="btn btn-success">Proceed to Order</button>
+        <button
+          className="cart-btn"
+          onClick={() => navigate("/order-details", { state: { cart } })}
+        >
+          Proceed to Order
+        </button>
       </div>
     </div>
   );
