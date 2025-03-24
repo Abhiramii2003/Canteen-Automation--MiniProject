@@ -2,29 +2,47 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Sidebar from "./Sidebar";
-const API_URL = "http://localhost:5000"
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+
+const API_URL = "http://localhost:5000"; // Adjust this to your API URL
+
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
+  const navigate = useNavigate();
 
   // Fetch users from backend
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/users`); // Replace with your actual API endpoint
+      const response = await axios.get(`${API_URL}/api/users`, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`, // Add token to request header
+        },
+      });
       setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
+      // Redirect to login page if error occurs (e.g., unauthorized access)
+      navigate("/login");
     }
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  // Check if user is authenticated
+  const checkAuthentication = () => {
+    const token = sessionStorage.getItem("token"); // Retrieve the token from sessionStorage
+    if (!token) {
+      navigate("/login"); // Redirect to login if token is missing
+    }
+  };
 
-  // Function to toggle user status (Active/Suspended) and update in backend
+  // Toggle user status (Active/Suspended)
   const toggleStatus = async (id, currentStatus) => {
     try {
       const newStatus = currentStatus === "Active" ? "Suspended" : "Active";
-      const response = await axios.put(`${API_URL}/api/users/${id}/status`, { status: newStatus });
+      const response = await axios.put(`${API_URL}/api/users/${id}/status`, { status: newStatus }, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`, // Add token to request header
+        },
+      });
 
       if (response.data.success) {
         setUsers((prevUsers) =>
@@ -37,6 +55,11 @@ const UserManagement = () => {
       console.error("Error updating status:", error);
     }
   };
+
+  useEffect(() => {
+    checkAuthentication(); // Check if user is authenticated
+    fetchUsers(); // Fetch users data only if authenticated
+  }, []);
 
   return (
     <>
@@ -63,9 +86,7 @@ const UserManagement = () => {
                   <td>{user.email}</td>
                   <td>
                     <button
-                      className={`btn btn-sm ${
-                        user.status === "Active" ? "btn-success" : "btn-secondary"
-                      }`}
+                      className={`btn btn-sm ${user.status === "Active" ? "btn-success" : "btn-secondary"}`}
                       onClick={() => toggleStatus(user._id, user.status)}
                     >
                       {user.status}

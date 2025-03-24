@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./MenuManagement.css";
 import Sidebar from "./Sidebar";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const API_URL = "http://localhost:5000";
 
@@ -17,14 +18,29 @@ const MenuManagement = () => {
   });
   const [editItem, setEditItem] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
+  // Check if the user is authenticated
   useEffect(() => {
-    fetchMenuItems();
+    checkAuthentication();
+    fetchMenuItems(); // Fetch menu items if authenticated
   }, []);
+
+  const checkAuthentication = () => {
+    const token = sessionStorage.getItem("token"); // Check if token exists
+    if (!token) {
+      navigate("/login"); // Redirect to login if not authenticated
+    }
+  };
 
   const fetchMenuItems = async () => {
     try {
-      const res = await axios.get(`${API_URL}/menu`);
+      const token = sessionStorage.getItem("token"); // Get token from session storage
+      const res = await axios.get(`${API_URL}/menu`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Add token to the headers
+        },
+      });
       setMenuItems(res.data);
     } catch (error) {
       console.error("Error fetching menu items", error);
@@ -43,6 +59,7 @@ const MenuManagement = () => {
 
   const saveMenuItem = async () => {
     try {
+      const token = sessionStorage.getItem("token"); // Get token from session storage
       const formData = new FormData();
       formData.append("name", newItem.name);
       formData.append("price", newItem.price);
@@ -52,9 +69,19 @@ const MenuManagement = () => {
       if (newItem.image) formData.append("image", newItem.image);
 
       if (editItem) {
-        await axios.put(`${API_URL}/menu/${editItem._id}`, formData, { headers: { "Content-Type": "multipart/form-data" } });
+        await axios.put(`${API_URL}/menu/${editItem._id}`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`, // Add token to the headers
+          },
+        });
       } else {
-        await axios.post(`${API_URL}/menu`, formData, { headers: { "Content-Type": "multipart/form-data" } });
+        await axios.post(`${API_URL}/menu`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`, // Add token to the headers
+          },
+        });
       }
 
       setNewItem({ name: "", price: "", description: "", category: "", image: null, available: true });
@@ -68,7 +95,12 @@ const MenuManagement = () => {
 
   const deleteMenuItem = async (id) => {
     try {
-      await axios.delete(`${API_URL}/menu/${id}`);
+      const token = sessionStorage.getItem("token"); // Get token from session storage
+      await axios.delete(`${API_URL}/menu/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Add token to the headers
+        },
+      });
       fetchMenuItems();
     } catch (error) {
       console.error("Error deleting menu item", error);
@@ -77,7 +109,16 @@ const MenuManagement = () => {
 
   const toggleAvailability = async (id, currentStatus) => {
     try {
-      await axios.put(`${API_URL}/menu/${id}`, { available: !currentStatus });
+      const token = sessionStorage.getItem("token"); // Get token from session storage
+      await axios.put(
+        `${API_URL}/menu/${id}`,
+        { available: !currentStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Add token to the headers
+          },
+        }
+      );
       fetchMenuItems();
     } catch (error) {
       console.error("Error toggling availability", error);

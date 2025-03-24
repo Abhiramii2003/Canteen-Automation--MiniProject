@@ -52,12 +52,17 @@ const LoginSignup = () => {
       if (response.ok) {
         sessionStorage.setItem("token", data.token);
         sessionStorage.setItem("userData", JSON.stringify(data.user));
-        setMessage(`✅ ${data.message || "Success!"}`);
+     
         setFormData({ username: "", email: "", password: "" });
 
         if (data.user) {
           if (data.user.role === "user") {
+            if(data.user.status==='Active'){
             navigate("/dashboard-home");
+            }
+            else{
+              setMessage(`✅ ${data.message || "The User is Suspended from using the Website...!"}`);
+            }
           } else if (data.user.role === "admin") {
             navigate("/admin-dashboard");
           }

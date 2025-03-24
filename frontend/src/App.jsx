@@ -12,8 +12,6 @@ import Orders from "./components/User/Orders.jsx";
 import Profile from "./components/User/Profile.jsx";
 import SeatingArrangement from "./components/User/SeatingArrangement.jsx";
 import DashboardHome from "./components/User/DashboardHome.jsx";
-        <Route path="/order-details" element={<OrderDetails />} />
-
 
 import UserNotificationsAndRecommendations from "./components/User/UserNotificationsAndRecommendations";
 
@@ -26,11 +24,9 @@ import UserManagement from "./components/Admin/UserManagement.jsx";
 import SalesAnalytics from "./components/Admin/SalesProfitAnalytics.jsx";
 import CartPage from "./components/User/cartPage.jsx";
 
-import AdminNotifications from "./components/Admin/AdminNotifications";
 import OrderDetails from "./components/User/OrderDetails.jsx";
 import PaymentPage from "./components/User/PaymentPage.jsx";
 import OrderConfirmation from "./components/User/OrderConfirmation.jsx";
-
 
 function App() {
   return (
@@ -38,7 +34,7 @@ function App() {
       {/* Public Routes */}
       <Route path="/" element={<Home />} />
       <Route path="/auth" element={<LoginSignup />} />
-      
+      <Route path="/login" element={<LoginSignup />} />
 
       {/* User Dashboard Pages */}
       <Route path="/dashboard" element={<Dashboard />} />
@@ -48,12 +44,15 @@ function App() {
       <Route path="/profile" element={<Profile />} />
       <Route path="/order" element={<Orders />} />
       <Route path="/seat" element={<SeatingArrangement />} />
-      <Route path="cart" element={<CartPage/>}/>
-      <Route path="notification" element={<UserNotificationsAndRecommendations />} />
+      <Route path="cart" element={<CartPage />} />
+      <Route
+        path="notification"
+        element={<UserNotificationsAndRecommendations />}
+      />
       <Route path="/order-details" element={<OrderDetails />} />
-      <Route path ="/paymentpage" element={<PaymentPage/>}/>
-      <Route path="/order-confirmation" element={<OrderConfirmation/>}/>
-
+      <Route path="/paymentpage" element={<PaymentPage />} />
+      <Route path="/order-confirmation" element={<OrderConfirmation />} />
+      <Route path="/order-details" element={<OrderDetails />} />;
 
 
       {/* Admin Dashboard Pages */}
@@ -63,9 +62,7 @@ function App() {
       <Route path="/seating" element={<SeatManagement />} />
       <Route path="/admin-user" element={<UserManagement />} />
       <Route path="/admin-profit" element={<SalesAnalytics />} />
-      <Route path="/admin-notification" element={<AdminNotifications />} />
-
-    
+     
     </Routes>
   );
 }

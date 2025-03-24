@@ -6,6 +6,8 @@ import {
 } from "recharts";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Sidebar from "./Sidebar";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+import "./SalesAnalytics.css";
 
 const API_URL = "http://localhost:5000/api/admin/orders"; // Change this to match your API
 
@@ -16,17 +18,28 @@ const SalesAnalytics = () => {
   const [mostSoldCategory, setMostSoldCategory] = useState("");
   const [topItems, setTopItems] = useState([]);
 
-
   const EXPENSE = 10000; // Change as per your expense
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
+  const navigate = useNavigate(); // Initialize useNavigate
 
-  const fetchOrders = async () => {
+  useEffect(() => {
+    const token = sessionStorage.getItem("token"); // Get token from sessionStorage
+
+    if (!token) {
+      navigate("/login"); // If no token, navigate to login
+      return;
+    }
+
+    fetchOrders(token); // Pass token to fetchOrders function
+  }, [navigate]); // Include navigate in the dependency array
+
+  const fetchOrders = async (token) => {
     try {
-      const response = await axios.get(API_URL);
-      console.log("API Response:", response.data);
+      const response = await axios.get(API_URL, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Pass token in Authorization header
+        },
+      });
 
       const orders = Array.isArray(response.data) ? response.data : [];
       let totalSales = 0;
@@ -43,6 +56,7 @@ const SalesAnalytics = () => {
           }
         });
       });
+
       const itemCounts = {};
       response.data.forEach((order) => {
         order.cart.forEach((item) => {
@@ -90,7 +104,7 @@ const SalesAnalytics = () => {
 
           {/* Summary Cards */}
           <div className="row mb-4">
-            {[
+            {[ 
               { title: "Total Sales", value: `$${salesData.reduce((acc, order) => acc + order.totalAmount, 0)}`, color: "primary" },
               { title: "Expense", value: `$${EXPENSE}`, color: "warning" },
               { title: profit >= 0 ? "Profit" : "Loss", value: `$${Math.abs(profit)}`, color: profit >= 0 ? "success" : "danger" },
@@ -139,26 +153,26 @@ const SalesAnalytics = () => {
 
           {/* Pie Chart for Top Selling Item */}
           <div className="col-md-4">
-              <h5>Top Selling Items</h5>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={topItems}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={100}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label
-                  >
-                    {topItems.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
+            <h5>Top Selling Items</h5>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={topItems}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  fill="#8884d8"
+                  dataKey="value"
+                  label
+                >
+                  {topItems.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
     </>

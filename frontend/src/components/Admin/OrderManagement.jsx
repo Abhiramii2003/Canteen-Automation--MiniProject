@@ -2,23 +2,40 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Sidebar from "./Sidebar";
 import "./OrderManagement.css"; // Import the CSS file
+import {  useNavigate } from "react-router-dom"; // For redirecting to login page if unauthenticated
 
 const BASE_URL = "http://localhost:5000"; // Update if backend URL differs
 
 const OrderManagement = () => {
   const [orders, setOrders] = useState([]);
+  const history = useNavigate(); // Using React Router for redirection
 
   useEffect(() => {
-    fetchOrders();
+    // Check for token before fetching orders
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      history("/login"); // Redirect to login if no token is found
+    } else {
+      fetchOrders(token);
+    }
   }, []);
 
-  const fetchOrders = async () => {
+  // Fetch orders from the backend
+  const fetchOrders = async (token) => {
     try {
-      const response = await axios.get(`${BASE_URL}/orders`);
+      const response = await axios.get(`${BASE_URL}/orders`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Include token in Authorization header
+        },
+      });
       const sortedOrders = sortOrders(response.data);
       setOrders(sortedOrders);
     } catch (error) {
       console.error("Error fetching orders:", error);
+      if (error.response && error.response.status === 401) {
+        // Token expired or invalid, redirect to login page
+        history.push("/login");
+      }
     }
   };
 
@@ -26,9 +43,19 @@ const OrderManagement = () => {
     return orders.sort((a, b) => (a.status === "Completed" ? 1 : -1));
   };
 
+  // Update order status in the backend
   const updateStatus = async (id, newStatus) => {
+    const token = sessionStorage.getItem("token");
     try {
-      await axios.put(`${BASE_URL}/orders/${id}`, { status: newStatus });
+      await axios.put(
+        `${BASE_URL}/orders/${id}`,
+        { status: newStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include token in Authorization header
+          },
+        }
+      );
       setOrders((prevOrders) => {
         const updatedOrders = prevOrders.map((order) =>
           order._id === id ? { ...order, status: newStatus } : order
@@ -37,6 +64,10 @@ const OrderManagement = () => {
       });
     } catch (error) {
       console.error("Error updating order status:", error);
+      if (error.response && error.response.status === 401) {
+        // Token expired or invalid, redirect to login page
+        history.push("/login");
+      }
     }
   };
 

@@ -15,12 +15,13 @@ const upload = multer({ storage });
 // Get all menu items (for users)
 exports.usermenu = async (req, res) => {
   try {
-    const menuItems = await MenuItem.find();
+    const menuItems = await MenuItem.find({ available: true });
     res.status(200).json(menuItems);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch menu items" });
   }
 };
+
 
 // Get all menu items (admin)
 exports.getmenu = async (req, res) => {

@@ -15,7 +15,12 @@ const AdminSeatingManagement = () => {
   // Fetch seating data from the backend
   const fetchSeats = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/seats`);
+      const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
+      const response = await axios.get(`${BASE_URL}/seats`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Include token in Authorization header
+        },
+      });
       setSeats(response.data);
     } catch (error) {
       console.error("Error fetching seats:", error);
@@ -25,7 +30,16 @@ const AdminSeatingManagement = () => {
   // Update seat status in the backend
   const updateStatus = async (id, newStatus) => {
     try {
-      await axios.put(`${BASE_URL}/seats/${id}`, { status: newStatus });
+      const token = sessionStorage.getItem("token"); // Assuming token is stored in localStorage
+      await axios.put(
+        `${BASE_URL}/seats/${id}`,
+        { status: newStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include token in Authorization header
+          },
+        }
+      );
       setSeats((prevSeats) =>
         prevSeats.map((seat) =>
           seat._id === id ? { ...seat, status: newStatus } : seat

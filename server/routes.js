@@ -24,11 +24,32 @@ const {
   clearfromcart,
   decreaseQuantity,
 } = require("./controller/cartController");
-const { selectseat, getseats, updateSeat, seatUpdate } = require("./controller/seatController");
-const { confirmOrder, getorders, getAllOrders, updateOrderStatus, getLastToken } = require("./controller/OrderController");
+const {
+  selectseat,
+  getseats,
+  updateSeat,
+  seatUpdate,
+} = require("./controller/seatController");
+const {
+  confirmOrder,
+  getorders,
+  getAllOrders,
+  updateOrderStatus,
+  getLastToken,
+} = require("./controller/OrderController");
 const authMiddleware = require("./authMiddleware");
-const { getOrderNotifications } = require("./controller/notificationController");
-const { profile, profileimage, getUserProfile, uploadProfileImage, upload, getuser, updateuserStatus } = require("./controller/userController");
+const {
+  getOrderNotifications,
+} = require("./controller/notificationController");
+const {
+  profile,
+  profileimage,
+  getUserProfile,
+  uploadProfileImage,
+  upload,
+  getuser,
+  updateuserStatus,
+} = require("./controller/userController");
 
 // api to register a user
 router.post("/signup", async (req, res) => {
@@ -85,66 +106,62 @@ router.post("/login", async (req, res) => {
   }
 });
 
-
-
 // Get all menu items
-router.get("/menu", getmenu);
+router.get("/menu",authMiddleware, getmenu);
 
 // Add a new menu item
-router.post("/menu", addmenu);
+router.post("/menu",authMiddleware, addmenu);
 // Update a menu item
-router.put("/menu/:id", editmenu);
+router.put("/menu/:id",authMiddleware, editmenu);
 
 // Delete a menu item
-router.delete("/menu/:id", deletemenu);
+router.delete("/menu/:id",authMiddleware, deletemenu);
 //get allmenu item for users
 router.get("/user/menu", usermenu);
 
 router.get("/cart/:userId", getCart);
-router.post("/cart/add",authMiddleware, addtocart);
+router.post("/cart/add", authMiddleware, addtocart);
 router.post("/cart/decrease", decreaseQuantity);
 router.post("/cart/remove", removefromCart);
 router.post("/clear/clear", clearfromcart);
 
-router.post("/select-seat",selectseat)
-router.get("/api/seats",authMiddleware,getseats)
-router.post("/update-seat-status",authMiddleware,updateSeat)
+router.post("/select-seat", selectseat);
+router.get("/api/seats", authMiddleware, getseats);
+router.post("/update-seat-status", authMiddleware, updateSeat);
 
-
-router.post("/confirm-order",authMiddleware,confirmOrder)
-router.get("/api/orders", authMiddleware,getorders)
+router.post("/confirm-order", authMiddleware, confirmOrder);
+router.get("/api/orders", authMiddleware, getorders);
 
 router.get("/api/orders/notifications", authMiddleware, getOrderNotifications);
 
-router.post("/user/upload-profile", authMiddleware, upload.single("profileImage"), uploadProfileImage);
+router.post(
+  "/user/upload-profile",
+  authMiddleware,
+  upload.single("profileImage"),
+  uploadProfileImage
+);
 
 // Route to Get User Profile
 router.get("/user/profile", authMiddleware, getUserProfile);
 
-router.get("/orders", getAllOrders);
-router.put("/orders/:id", updateOrderStatus);
+router.get("/orders",authMiddleware, getAllOrders);
+router.put("/orders/:id",authMiddleware, updateOrderStatus);
 
-router.get('/orders/last-token',getLastToken)
-router.get("/seats",getseats)
+router.get("/orders/last-token", getLastToken);
+router.get("/seats", getseats);
 
-router.put('/seats/:id',seatUpdate)
-router.get("/api/admin/orders", getAllOrders);
+router.put("/seats/:id",authMiddleware, seatUpdate);
+router.get("/api/admin/orders",authMiddleware, getAllOrders);
 
-router.get('/api/users',getuser)
-router.put('/api/users/:id/status',updateuserStatus)
+router.get("/api/users", getuser);
+router.put("/api/users/:id/status",authMiddleware, updateuserStatus);
 
-
-
-
-
-
-
-router.get("/api/admin/stats", async (req, res) => {
+router.get("/api/admin/stats",authMiddleware, async (req, res) => {
   try {
     // Replace these with actual database queries
     const totalUsers = await User.countDocuments();
     const revenueData = await Order.aggregate([
-      { $group: { _id: null, total: { $sum: "$totalAmount" } } }
+      { $group: { _id: null, total: { $sum: "$totalAmount" } } },
     ]);
 
     const totalRevenue = revenueData.length ? revenueData[0].total : 0;
@@ -154,9 +171,9 @@ router.get("/api/admin/stats", async (req, res) => {
 
     res.json({
       totalUsers,
-      revenue:totalRevenue,
+      revenue: totalRevenue,
       totalOrders,
-      menuCount
+      menuCount,
       //messages,
     });
   } catch (error) {

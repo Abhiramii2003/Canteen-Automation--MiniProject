@@ -1,8 +1,14 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import './sidebar.css'
 
 function Sidebar() {
+  const navigate=useNavigate()
+  const handleLogout=()=>{
+    sessionStorage.clear()
+    navigate('/')
+
+  }
   return (
     <div className="sidebar">
         <Link to="/admin-dashboard" className="admin-title">
@@ -18,7 +24,7 @@ function Sidebar() {
       </nav>
 
       {/* Logout Button Placed Below Links */}
-      <button className="btn btn-danger logout-btn">Logout</button>
+      <button className="btn btn-danger logout-btn" onClick={handleLogout}>Logout</button>
     </div>
   )
 }

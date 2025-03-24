@@ -14,7 +14,7 @@ export default function PaymentPage() {
   const [redirectedToGPay, setRedirectedToGPay] = useState(false);
 
   const authToken = sessionStorage.getItem("token"); // Get token from storage
-
+  const user =sessionStorage.getItem("userData")
   useEffect(() => {
     if (!authToken) {
       navigate("/login"); // Redirect to login if not authenticated
@@ -60,7 +60,8 @@ export default function PaymentPage() {
           cart,
           seats: takeaway ? [] : selectedSeats,
           takeaway,
-          paymentMode
+          paymentMode,
+          username:user.username
         },
         { headers: { Authorization: `Bearer ${authToken}` } }
       );

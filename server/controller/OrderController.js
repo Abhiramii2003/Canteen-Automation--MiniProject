@@ -5,7 +5,7 @@ exports.confirmOrder=async (req, res) => {
     console.log(req.user.id);
     const userId=req.user.id
     try {
-      const { token, totalAmount, cart, seats, takeaway,paymentMode } = req.body;
+      const { token, totalAmount, cart, seats, takeaway,paymentMode,username } = req.body;
       console.log(req.body);
       
   
@@ -17,10 +17,11 @@ exports.confirmOrder=async (req, res) => {
         seats,
         takeaway,
         userId,
-        paymentMode, // Ensure correct key name here
+        paymentMode,
+        username // Ensure correct key name here
       });
       
-      console.log("New Order:", newOrder);
+      //console.log("New Order:", newOrder);
       await newOrder.save();
       
       const deleteCart = await Cart.findOneAndDelete({ userId });
