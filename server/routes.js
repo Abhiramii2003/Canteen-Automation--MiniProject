@@ -5,6 +5,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 // models  intializations
 const User = require("./model/usermodel");
+const Order = require("./model/orderSchema");
+
 const MenuItem = require("./model/menuModel");
 
 const {
@@ -26,7 +28,7 @@ const { selectseat, getseats, updateSeat, seatUpdate } = require("./controller/s
 const { confirmOrder, getorders, getAllOrders, updateOrderStatus, getLastToken } = require("./controller/OrderController");
 const authMiddleware = require("./authMiddleware");
 const { getOrderNotifications } = require("./controller/notificationController");
-const { profile, profileimage, getUserProfile, uploadProfileImage, upload } = require("./controller/userController");
+const { profile, profileimage, getUserProfile, uploadProfileImage, upload, getuser, updateuserStatus } = require("./controller/userController");
 
 // api to register a user
 router.post("/signup", async (req, res) => {
@@ -126,4 +128,39 @@ router.get('/orders/last-token',getLastToken)
 router.get("/seats",getseats)
 
 router.put('/seats/:id',seatUpdate)
+router.get("/api/admin/orders", getAllOrders);
+
+router.get('/api/users',getuser)
+router.put('/api/users/:id/status',updateuserStatus)
+
+
+
+
+
+
+
+router.get("/api/admin/stats", async (req, res) => {
+  try {
+    // Replace these with actual database queries
+    const totalUsers = await User.countDocuments();
+    const revenueData = await Order.aggregate([
+      { $group: { _id: null, total: { $sum: "$totalAmount" } } }
+    ]);
+
+    const totalRevenue = revenueData.length ? revenueData[0].total : 0;
+    const totalOrders = await Order.countDocuments();
+    //const messages = await Message.countDocuments();
+    const menuCount = await MenuItem.countDocuments();
+
+    res.json({
+      totalUsers,
+      revenue:totalRevenue,
+      totalOrders,
+      menuCount
+      //messages,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching dashboard stats" });
+  }
+});
 module.exports = router;

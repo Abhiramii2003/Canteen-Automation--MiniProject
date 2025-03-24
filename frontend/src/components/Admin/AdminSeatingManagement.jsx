@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./AdminSeatingManagement.css";
+import styles from "./AdminSeatingManagement.module.css"; // Import CSS Module
+import Sidebar from "./Sidebar";
 
 const BASE_URL = "http://localhost:5000"; // Update to your backend URL
 
@@ -40,65 +41,58 @@ const AdminSeatingManagement = () => {
     let newStatus;
     if (seat.status === "available") newStatus = "occupied";
     else if (seat.status === "selected") newStatus = "available";
-    else if (seat.status === "occupied") newStatus = "available"; // Now occupied seats can be changed
+    else if (seat.status === "occupied") newStatus = "available"; // Admin can change occupied seats to available
 
     updateStatus(seat._id, newStatus);
   };
 
   return (
-    <div className="admin-seating-container">
-      <h2 className="admin-seating-title"> Canteen seating</h2>
+    <div className={styles.adminSeatingContainer}>
+      <div className="row">
+        <div className={`col-lg-2 ${styles.sidebarContainer}`}>
+          <Sidebar />
+        </div>
+        <div className={`col-lg-10 container mt-4 ${styles.mainContent}`}>
+          <h2 className={styles.adminSeatingTitle}>Canteen Seating</h2>
 
-      {/* Tabs Navigation */}
-      <div className="tabs-container">
-     
-        <div className="tab active">2. Canteen Tables</div>
-    
-      </div>
+          {/* Seating Box */}
+          <div className={styles.seatingBox}>
+            {/* Seating Layout */}
+            <div className={styles.seatingLayout}>
+              {[...new Set(seats.map((seat) => seat.table))].map((tableId) => (
+                <div key={tableId} className={styles.tableBox}>
+                  <p>Table {tableId}</p>
+                  <div className={styles.seats}>
+                    {seats
+                      .filter((seat) => seat.table === tableId)
+                      .map((seat) => (
+                        <div
+                          key={seat._id}
+                          className={`${styles.seat} ${
+                            styles[seat.status]
+                          }`} // Apply dynamic class
+                          onClick={() => toggleSeat(seat)}
+                        >
+                          {seat.number}
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              ))}
+            </div>
 
-      {/* Seating Box */}
-      <div className="seating-box">
-        <p style={{ textAlign: "center", fontSize: "18px", marginBottom: "15px" }}>
-          Canteen Seating
-        </p>
-
-        {/* Seating Layout */}
-        <div className="seating-layout">
-          {[...new Set(seats.map((seat) => seat.table))].map((tableId) => (
-            <div key={tableId} className="table-box">
-              <p>Table {tableId}</p>
-              <div className="seats">
-                {seats
-                  .filter((seat) => seat.table === tableId)
-                  .map((seat) => (
-                    <div
-                      key={seat._id}
-                      className={`seat ${seat.status}`}
-                      onClick={() => toggleSeat(seat)}
-                    >
-                      {seat.number}
-                    </div>
-                  ))}
+            {/* Legend */}
+            <div className={styles.legend}>
+              <div className={styles.legendItem}>
+                <div className={`${styles.legendBox} ${styles.legendAvailable}`}></div> Available
+              </div>
+            
+              <div className={styles.legendItem}>
+                <div className={`${styles.legendBox} ${styles.legendOccupied}`}></div> Occupied
               </div>
             </div>
-          ))}
-        </div>
-
-        {/* Legend */}
-        <div className="legend">
-          <div className="legend-item">
-            <div className="legend-box legend-available"></div> Available
-          </div>
-          <div className="legend-item">
-            <div className="legend-box legend-selected"></div> Selected
-          </div>
-          <div className="legend-item">
-            <div className="legend-box legend-occupied"></div> Occupied
           </div>
         </div>
-
-        {/* Buttons */}
-       
       </div>
     </div>
   );
