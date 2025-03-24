@@ -105,9 +105,9 @@ const SalesAnalytics = () => {
           {/* Summary Cards */}
           <div className="row mb-4">
             {[ 
-              { title: "Total Sales", value: `$${salesData.reduce((acc, order) => acc + order.totalAmount, 0)}`, color: "primary" },
-              { title: "Expense", value: `$${EXPENSE}`, color: "warning" },
-              { title: profit >= 0 ? "Profit" : "Loss", value: `$${Math.abs(profit)}`, color: profit >= 0 ? "success" : "danger" },
+              { title: "Total Sales", value: `₹ ${salesData.reduce((acc, order) => acc + order.totalAmount, 0)}`, color: "primary" },
+              { title: "Expense", value: `₹ ${EXPENSE}`, color: "warning" },
+              { title: profit >= 0 ? "Profit" : "Loss", value: `₹ ${Math.abs(profit)}`, color: profit >= 0 ? "success" : "danger" },
               { title: "Most Sold Category", value: mostSoldCategory, color: "info" }
             ].map((item, index) => (
               <div key={index} className="col-md-3">

@@ -156,6 +156,7 @@ const Menu = () => {
                   <div className="card-body">
                     <h3 className="card-title fs-2">{item.name}</h3>
                     <p className="card-text fs-4 fw-bold">₹{item.price}</p>
+                    <p className="card-text text-dark">{item.description}</p>
                     <button className="btn btn-primary" onClick={() => addToCart(item)}>🛒 Add to Cart</button>
                   </div>
                 </div>

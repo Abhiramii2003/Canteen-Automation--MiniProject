@@ -153,6 +153,7 @@ const MenuManagement = () => {
                   <option value="Fast Food">Fast Food</option>
                   <option value="Beverage">Beverage</option>
                   <option value="Dessert">Dessert</option>
+                  <option value="Homely">Homely</option>
                 </select>
                 <input type="file" className="form-control mb-2" onChange={handleImageUpload} />
                 <button className="btn btn-primary me-2" onClick={saveMenuItem}>Save</button>
@@ -171,7 +172,7 @@ const MenuManagement = () => {
                       <h5 className="card-title">{item.name}</h5>
                       <p className="card-text">{item.description}</p>
                       <p><strong>Category:</strong> {item.category}</p>
-                      <p className="card-text">Price: ${item.price}</p>
+                      <p className="card-text">Price: ₹ {item.price}</p>
                       <p className={`card-text ${item.available ? "text-success" : "text-danger"}`}>{item.available ? "Available" : "Not Available"}</p>
                       <button className="btn btn-warning me-2" onClick={() => handleEdit(item)}>Edit</button>
                       <button className="btn btn-danger me-2" onClick={() => deleteMenuItem(item._id)}>Delete</button>

@@ -97,7 +97,7 @@ const OrderManagement = () => {
                 {orders.map((order) => (
                   <tr key={order._id}>
                     <td className="token-cell">{order.token}</td>
-                    <td>{order.userId}</td>
+                    <td>{order.username}</td>
                     <td>
                       <ul className="order-list">
                         {order.cart.map((item, index) => (

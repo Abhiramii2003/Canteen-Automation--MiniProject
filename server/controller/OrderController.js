@@ -1,12 +1,15 @@
 
 const Order = require("../model/orderSchema");
+const User =require("../model/usermodel")
 const Cart =require("../model/cart")
 exports.confirmOrder=async (req, res) => {
     console.log(req.user.id);
     const userId=req.user.id
     try {
-      const { token, totalAmount, cart, seats, takeaway,paymentMode,username } = req.body;
+      const { token, totalAmount, cart, seats, takeaway,paymentMode, } = req.body;
       console.log(req.body);
+      const user =await User.findOne({_id:userId})
+      //console.log(user.name);
       
   
       // Save order to the database
@@ -18,7 +21,8 @@ exports.confirmOrder=async (req, res) => {
         takeaway,
         userId,
         paymentMode,
-        username // Ensure correct key name here
+        username:user.name
+         // Ensure correct key name here
       });
       
       //console.log("New Order:", newOrder);

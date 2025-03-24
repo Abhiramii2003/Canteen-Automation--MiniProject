@@ -15,6 +15,8 @@ export default function PaymentPage() {
 
   const authToken = sessionStorage.getItem("token"); // Get token from storage
   const user =sessionStorage.getItem("userData")
+
+  
   useEffect(() => {
     if (!authToken) {
       navigate("/login"); // Redirect to login if not authenticated
