@@ -2,41 +2,64 @@
 const Order = require("../model/orderSchema");
 const User =require("../model/usermodel")
 const Cart =require("../model/cart")
-exports.confirmOrder=async (req, res) => {
-    console.log(req.user.id);
-    const userId=req.user.id
-    try {
-      const { token, totalAmount, cart, seats, takeaway,paymentMode, } = req.body;
-      console.log(req.body);
-      const user =await User.findOne({_id:userId})
-      //console.log(user.name);
-      
-  
-      // Save order to the database
-      const newOrder = new Order({
-        token,
-        totalAmount,
-        cart,
-        seats,
-        takeaway,
-        userId,
-        paymentMode,
-        username:user.name
-         // Ensure correct key name here
-      });
-      
-      //console.log("New Order:", newOrder);
-      await newOrder.save();
-      
-      const deleteCart = await Cart.findOneAndDelete({ userId });
-      res.status(200).json({ message: "Order confirmed successfully!", order: newOrder });
-    
+const MenuItems = require("../model/menuModel"); 
 
-    } catch (error) {
-      console.error("Error confirming order:", error);
-      res.status(500).json({ error: "Failed to confirm order" });
+exports.confirmOrder = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const { token, totalAmount, cart, seats, takeaway, paymentMode } = req.body;
+
+    const user = await User.findById(userId);
+
+    // Subtract quantities from MenuItems
+    for (const item of cart) {
+      const menuItem = await MenuItems.findById(item.productId);
+
+      if (!menuItem) {
+        return res.status(404).json({ error: `Menu item ${item.name} not found` });
+      }
+
+      if (menuItem.quantity < item.quantity) {
+        return res.status(400).json({
+          error: `Not enough quantity for ${item.name}. Available: ${menuItem.quantity}`,
+        });
+      }
+
+      menuItem.quantity -= item.quantity;
+
+      // If quantity becomes zero, mark item as unavailable
+      if (menuItem.quantity === 0) {
+        menuItem.available = false;
+      }
+
+      await menuItem.save();
     }
+
+    // Save order
+    const newOrder = new Order({
+      token,
+      totalAmount,
+      cart,
+      seats,
+      takeaway,
+      userId,
+      paymentMode,
+      username: user.name,
+    });
+
+    await newOrder.save();
+
+    // Clear user's cart
+    await Cart.findOneAndDelete({ userId });
+
+    res.status(200).json({ message: "Order confirmed successfully!", order: newOrder });
+
+  } catch (error) {
+    console.error("Error confirming order:", error);
+    res.status(500).json({ error: "Failed to confirm order" });
   }
+};
   exports.getorders=async (req, res) => {
     try {
       const userId = req.user.id; // Get userId from verified JWT token

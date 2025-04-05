@@ -13,6 +13,7 @@ const MenuManagement = () => {
     price: "",
     description: "",
     category: "",
+    quantity: "",
     image: null,
     available: true,
   });
@@ -20,26 +21,23 @@ const MenuManagement = () => {
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
-  // Check if the user is authenticated
   useEffect(() => {
     checkAuthentication();
-    fetchMenuItems(); // Fetch menu items if authenticated
+    fetchMenuItems();
   }, []);
 
   const checkAuthentication = () => {
-    const token = sessionStorage.getItem("token"); // Check if token exists
+    const token = sessionStorage.getItem("token");
     if (!token) {
-      navigate("/login"); // Redirect to login if not authenticated
+      navigate("/login");
     }
   };
 
   const fetchMenuItems = async () => {
     try {
-      const token = sessionStorage.getItem("token"); // Get token from session storage
+      const token = sessionStorage.getItem("token");
       const res = await axios.get(`${API_URL}/menu`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Add token to the headers
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setMenuItems(res.data);
     } catch (error) {
@@ -59,12 +57,13 @@ const MenuManagement = () => {
 
   const saveMenuItem = async () => {
     try {
-      const token = sessionStorage.getItem("token"); // Get token from session storage
+      const token = sessionStorage.getItem("token");
       const formData = new FormData();
       formData.append("name", newItem.name);
       formData.append("price", newItem.price);
       formData.append("description", newItem.description);
       formData.append("category", newItem.category);
+      formData.append("quantity", newItem.quantity);
       formData.append("available", newItem.available);
       if (newItem.image) formData.append("image", newItem.image);
 
@@ -72,19 +71,27 @@ const MenuManagement = () => {
         await axios.put(`${API_URL}/menu/${editItem._id}`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`, // Add token to the headers
+            Authorization: `Bearer ${token}`,
           },
         });
       } else {
         await axios.post(`${API_URL}/menu`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`, // Add token to the headers
+            Authorization: `Bearer ${token}`,
           },
         });
       }
 
-      setNewItem({ name: "", price: "", description: "", category: "", image: null, available: true });
+      setNewItem({
+        name: "",
+        price: "",
+        description: "",
+        category: "",
+        quantity: "",
+        image: null,
+        available: true,
+      });
       setEditItem(null);
       setShowModal(false);
       fetchMenuItems();
@@ -95,11 +102,9 @@ const MenuManagement = () => {
 
   const deleteMenuItem = async (id) => {
     try {
-      const token = sessionStorage.getItem("token"); // Get token from session storage
+      const token = sessionStorage.getItem("token");
       await axios.delete(`${API_URL}/menu/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Add token to the headers
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       fetchMenuItems();
     } catch (error) {
@@ -109,14 +114,12 @@ const MenuManagement = () => {
 
   const toggleAvailability = async (id, currentStatus) => {
     try {
-      const token = sessionStorage.getItem("token"); // Get token from session storage
+      const token = sessionStorage.getItem("token");
       await axios.put(
         `${API_URL}/menu/${id}`,
         { available: !currentStatus },
         {
-          headers: {
-            Authorization: `Bearer ${token}`, // Add token to the headers
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       fetchMenuItems();
@@ -140,13 +143,14 @@ const MenuManagement = () => {
         <div className="col-lg-10 container mt-4 p-5">
           <h2 className="text-center">Menu Management</h2>
           <button className="btn btn-success mb-3" onClick={() => setShowModal(true)}>Add Item</button>
-          
+
           {showModal && (
             <div className="modal-overlay">
               <div className="modal-content">
                 <h4>{editItem ? "Edit Item" : "Add New Item"}</h4>
                 <input type="text" className="form-control mb-2" name="name" placeholder="Item Name" value={newItem.name} onChange={handleInputChange} />
                 <input type="number" className="form-control mb-2" name="price" placeholder="Price" value={newItem.price} onChange={handleInputChange} />
+                <input type="number" className="form-control mb-2" name="quantity" placeholder="Quantity" value={newItem.quantity} onChange={handleInputChange} />
                 <textarea className="form-control mb-2" name="description" placeholder="Description" value={newItem.description} onChange={handleInputChange}></textarea>
                 <select className="form-control mb-2" name="category" value={newItem.category} onChange={handleInputChange}>
                   <option value="">Select Category</option>
@@ -161,7 +165,7 @@ const MenuManagement = () => {
               </div>
             </div>
           )}
-          
+
           <div className="menu-container">
             <div className="row">
               {menuItems.map((item) => (
@@ -172,8 +176,11 @@ const MenuManagement = () => {
                       <h5 className="card-title">{item.name}</h5>
                       <p className="card-text">{item.description}</p>
                       <p><strong>Category:</strong> {item.category}</p>
-                      <p className="card-text">Price: ₹ {item.price}</p>
-                      <p className={`card-text ${item.available ? "text-success" : "text-danger"}`}>{item.available ? "Available" : "Not Available"}</p>
+                      <p><strong>Price:</strong> ₹ {item.price}</p>
+                      <p><strong>Quantity:</strong> {item.quantity}</p>
+                      <p className={`card-text ${item.available ? "text-success" : "text-danger"}`}>
+                        {item.available ? "Available" : "Not Available"}
+                      </p>
                       <button className="btn btn-warning me-2" onClick={() => handleEdit(item)}>Edit</button>
                       <button className="btn btn-danger me-2" onClick={() => deleteMenuItem(item._id)}>Delete</button>
                       <button className="btn btn-secondary" onClick={() => toggleAvailability(item._id, item.available)}>

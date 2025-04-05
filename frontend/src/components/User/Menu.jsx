@@ -12,6 +12,7 @@ const Menu = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [cart, setCart] = useState([]);
+  const [items,setItems]=useState([])
   const [popup, setPopup] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All");
 
@@ -56,10 +57,33 @@ const Menu = () => {
       console.error("Error fetching cart:", error);
     }
   };
-
+ 
   const addToCart = async (item) => {
+    const menuItem = allProducts.find((menuItem) => menuItem._id === item.productId || menuItem._id === item._id);
+  
     try {
-      const response = await axios.post(
+      // Fetch latest cart before checking quantity
+      const response = await axios.get(`http://localhost:5000/cart/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      const currentCartItems = response.data.items;
+  
+      // Find the matching item in the cart
+      const existingCartItem = currentCartItems.find(
+        (cartItem) => cartItem.productId === item._id || cartItem.productId === item.productId
+      );
+  
+      const currentQty = existingCartItem ? existingCartItem.quantity : 0;
+  
+      // Quantity check
+      if (currentQty >= menuItem.quantity) {
+        alert("Cannot add more. Maximum available quantity reached.");
+        return;
+      }
+  
+      // Proceed with adding to cart
+      const addResponse = await axios.post(
         "http://localhost:5000/cart/add",
         {
           userId,
@@ -71,14 +95,16 @@ const Menu = () => {
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      setCart(response.data.items);
+  
+      setCart(addResponse.data.items);
       setPopup(true);
       setTimeout(() => setPopup(false), 2000);
+  
     } catch (error) {
       console.error("Error adding to cart:", error);
     }
   };
+  
 
   const decreaseQuantity = async (item) => {
     try {
@@ -93,6 +119,34 @@ const Menu = () => {
       console.error("Error decreasing quantity:", error);
     }
   };
+  const IncreseQuantity = async (item) => {
+    const menuItem = allProducts.find((menuItem) => menuItem._id === item.productId);
+
+  
+
+    if (item.quantity >= menuItem.quantity) {
+      alert("Cannot add more. Maximum available quantity reached.");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/cart/add",
+        { userId,
+           productId: item.productId,
+          name: item.name,
+          category: item.category,
+          price: item.price,
+          image: item.image,
+         },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setCart(response.data.items);
+    } catch (error) {
+      console.error("Error decreasing quantity:", error);
+    }
+  };
+
 
   const removeFromCart = async (item) => {
     try {
@@ -148,23 +202,32 @@ const Menu = () => {
       {/* Menu Items */}
       <div className="container">
         <div className="row g-4 justify-content-center">
-          {filteredProducts.length > 0 ? (
-            filteredProducts.map((item) => (
-              <div key={item._id} className="col-lg-3 col-md-4 col-sm-6">
-                <div className="card text-center shadow-lg p-3 border-0">
-                  <img src={`http://localhost:5000${item.image}`} className="card-img-top img-fluid" alt={item.name} />
-                  <div className="card-body">
-                    <h3 className="card-title fs-2">{item.name}</h3>
-                    <p className="card-text fs-4 fw-bold">₹{item.price}</p>
-                    <p className="card-text text-dark">{item.description}</p>
-                    <button className="btn btn-primary" onClick={() => addToCart(item)}>🛒 Add to Cart</button>
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-center fs-4 text-muted">No items available in this category.</p>
-          )}
+        {filteredProducts.length > 0 ? (
+  filteredProducts.map((item) => {
+    const isOutOfStock = item.quantity <= 0 || item.available === false;
+
+    return (
+      <div key={item._id} className="col-lg-3 col-md-4 col-sm-6">
+        <div className={`card text-center shadow-lg p-3 border-0 ${isOutOfStock ? 'out-of-stock-card' : ''}`} style={{ opacity: isOutOfStock ? 0.6 : 1 }}>
+          <img src={`http://localhost:5000${item.image}`} className="card-img-top img-fluid" alt={item.name} />
+          <div className="card-body">
+            <h3 className="card-title fs-2">{item.name}</h3>
+            <p className="card-text fs-4 fw-bold">₹{item.price}</p>
+            <p className="card-text text-dark">{item.description}</p>
+            {isOutOfStock ? (
+              <p className="text-danger fw-bold fs-5">❌ Out of Stock</p>
+            ) : (
+              <button className="btn btn-primary" onClick={() => addToCart(item)}>🛒 Add to Cart</button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  })
+) : (
+  <p className="text-center fs-4 text-muted">No items available in this category.</p>
+)}
+
         </div>
       </div>
 
@@ -178,7 +241,7 @@ const Menu = () => {
               <div>
                 <button className="btn btn-danger" onClick={() => decreaseQuantity(item)}><Minus /></button>
                 <span className="mx-2">{item.quantity}</span>
-                <button className="btn btn-success" onClick={() => addToCart(item)}><Plus /></button>
+                <button className="btn btn-success" onClick={() => IncreseQuantity(item)}><Plus /></button>
                 <button className="btn btn-dark ms-2" onClick={() => removeFromCart(item)}><Trash /></button>
               </div>
             </div>

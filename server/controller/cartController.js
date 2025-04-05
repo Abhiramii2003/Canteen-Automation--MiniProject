@@ -1,5 +1,6 @@
 
 const Cart = require("../model/cart");
+const Menu = require("../model/menuModel");
 
 // Get Cart for a User
 
@@ -42,29 +43,26 @@ exports.addtocart= async (req, res) => {
     }
   }
 // Remove or Decrease Quantity
-exports.removefromCart=async (req, res) => {
-    try {
-      const { userId, productId } = req.body;
-      let cart = await Cart.findOne({ userId });
-  
-      if (!cart) return res.status(404).json({ message: "Cart not found" });
-  
-      cart.items = cart.items
-        .map((item) => {
-          if (item.productId.toString() === productId) {
-            item.quantity -= 1;
-            return item.quantity > 0 ? item : null;
-          }
-          return item;
-        })
-        .filter(Boolean);
-  
-      await cart.save();
-      res.json(cart);
-    } catch (error) {
-      res.status(500).json({ message: "Error removing item", error });
-    }
+exports.removefromCart = async (req, res) => {
+  try {
+    const { userId, productId } = req.body;
+
+    let cart = await Cart.findOne({ userId });
+
+    if (!cart) return res.status(404).json({ message: "Cart not found" });
+
+    // Filter out the item to be removed
+    cart.items = cart.items.filter(
+      (item) => item.productId.toString() !== productId
+    );
+
+    await cart.save();
+    res.json(cart);
+  } catch (error) {
+    res.status(500).json({ message: "Error removing item", error });
   }
+};
+
   //decrease the quantity
   exports.decreaseQuantity=async (req, res) => {
     try {

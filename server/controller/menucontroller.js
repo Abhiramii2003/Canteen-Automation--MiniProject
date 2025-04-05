@@ -15,7 +15,7 @@ const upload = multer({ storage });
 // Get all menu items (for users)
 exports.usermenu = async (req, res) => {
   try {
-    const menuItems = await MenuItem.find({ available: true });
+    const menuItems = await MenuItem.find();
     res.status(200).json(menuItems);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch menu items" });
@@ -38,7 +38,7 @@ exports.addmenu = [
   upload.single("image"),
   async (req, res) => {
     try {
-      const { name, price, description, category, available } = req.body;
+      const { name, price, description, category, available,quantity } = req.body;
 
       const newItem = new MenuItem({
         name,
@@ -47,6 +47,7 @@ exports.addmenu = [
         category,
         image: req.file ? `/uploads/${req.file.filename}` : "",
         available,
+        quantity
       });
 
       await newItem.save();
@@ -62,8 +63,8 @@ exports.editmenu = [
   upload.single("image"),
   async (req, res) => {
     try {
-      const { name, price, description, category, available } = req.body;
-      let updatedData = { name, price, description, category, available };
+      const { name, price, description, category, available,quantity } = req.body;
+      let updatedData = { name, price, description, category, available,quantity };
 
       if (req.file) {
         updatedData.image = `/uploads/${req.file.filename}`;

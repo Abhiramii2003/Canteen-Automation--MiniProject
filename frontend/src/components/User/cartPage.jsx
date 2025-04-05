@@ -9,25 +9,31 @@ import Dashboard from "./Dashboard";
 const CartPage = () => {
   const navigate = useNavigate();
 
-  // Retrieve and parse user data
   const storedUserData = sessionStorage.getItem("userData");
   const userData = storedUserData ? JSON.parse(storedUserData) : null;
-
-  // Retrieve token
   const token = sessionStorage.getItem("token");
-  //console.log(sessionStorage.getItem("token"));
-  
-
-  // Get user ID safely
-  const userId = userData?._id || null; // Fallback to null if not found
+  const userId = userData?._id || null;
 
   const [cart, setCart] = useState([]);
+  const [menu, setMenu] = useState([]); // Store menu items
 
   useEffect(() => {
     if (userId && token) {
       fetchCart();
+      fetchMenu();
     }
   }, [userId, token]);
+
+  const fetchMenu = async () => {
+    try {
+      const result = await axios.get("http://localhost:5000/user/menu", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setMenu(result.data); // Store menu data
+    } catch (error) {
+      console.error("Error fetching menu:", error);
+    }
+  };
 
   const fetchCart = async () => {
     try {
@@ -41,6 +47,18 @@ const CartPage = () => {
   };
 
   const addToCart = async (item) => {
+    const menuItem = menu.find((menuItem) => menuItem._id === item.productId);
+
+    if (!menuItem) {
+      alert("Menu item not found.");
+      return;
+    }
+
+    if (item.quantity >= menuItem.quantity) {
+      alert("Cannot add more. Maximum available quantity reached.");
+      return;
+    }
+
     try {
       const response = await axios.post(
         "http://localhost:5000/cart/add",
@@ -61,6 +79,9 @@ const CartPage = () => {
   };
 
   const decreaseQuantity = async (item) => {
+
+ 
+
     try {
       const response = await axios.post(
         "http://localhost:5000/cart/decrease",
@@ -74,10 +95,17 @@ const CartPage = () => {
   };
 
   const removeFromCart = async (item) => {
+    const menuItem = menu.find((menuItem) => menuItem._id === item.productId);
+
+    if (item.quantity >= menuItem.quantity) {
+      alert("Cannot add more. Maximum available quantity reached.");
+      return;
+    }
+
     try {
       const response = await axios.post(
         "http://localhost:5000/cart/remove",
-        { userId, productId: item.productId },
+        { userId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setCart(response.data.items);
@@ -92,7 +120,6 @@ const CartPage = () => {
     <>
       <div className="container-fluid p-5">
         <Dashboard />
-
         <div className="cart-container mt-3">
           <h2 className="cart-title">
             🛍️ Your Cart <ShoppingCart />

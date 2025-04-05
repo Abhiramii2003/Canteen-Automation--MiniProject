@@ -166,4 +166,8 @@
       font-size: 1rem;
     }
   }
+  .out-of-stock-card {
+    pointer-events: none;
+    filter: grayscale(0.6);
+  }
   

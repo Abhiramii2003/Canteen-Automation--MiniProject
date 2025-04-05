@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const OrderSchema = new mongoose.Schema({
-    token: String,
+    token: Number,
     totalAmount: Number,
     cart: Array,
     seats: Array,
