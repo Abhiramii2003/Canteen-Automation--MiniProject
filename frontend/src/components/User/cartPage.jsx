@@ -95,25 +95,18 @@ const CartPage = () => {
   };
 
   const removeFromCart = async (item) => {
-    const menuItem = menu.find((menuItem) => menuItem._id === item.productId);
-
-    if (item.quantity >= menuItem.quantity) {
-      alert("Cannot add more. Maximum available quantity reached.");
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/cart/remove",
-        { userId },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setCart(response.data.items);
-    } catch (error) {
-      console.error("Error removing item:", error);
-    }
-  };
-
+     try {
+       const response = await axios.post(
+         "http://localhost:5000/cart/remove",
+         { userId, productId: item.productId },
+         { headers: { Authorization: `Bearer ${token}` } }
+       );
+ 
+       setCart(response.data.items);
+     } catch (error) {
+       console.error("Error removing item:", error);
+     }
+   };
   const totalAmount = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   return (
